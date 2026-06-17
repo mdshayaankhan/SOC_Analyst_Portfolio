@@ -17,6 +17,8 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
   const [showBubble, setShowBubble] = useState(true);
   const [eyeOffset, setEyeOffset] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
+  const [isBlinking, setIsBlinking] = useState(false);
+  const [botAnimationState, setBotAnimationState] = useState('idle');
   const botRef = useRef(null);
 
   // Cycle dialog quotes
@@ -30,6 +32,24 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     return () => clearInterval(interval);
   }, [showBubble, isTerminalOpen]);
 
+  // Periodic Cute Blinking Animation
+  useEffect(() => {
+    const blinkCycle = () => {
+      setIsBlinking(true);
+      setTimeout(() => {
+        setIsBlinking(false);
+      }, 160);
+    };
+
+    const interval = setInterval(() => {
+      if (Math.random() > 0.3) {
+        blinkCycle();
+      }
+    }, 3800);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Track cursor coordinates relative to the bot center for interactive tracking eyes
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -42,9 +62,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       const dy = e.clientY - botCenterY;
       const dist = Math.hypot(dx, dy);
 
-      const maxDisplacement = 4.5;
+      const maxDisplacement = 5;
       if (dist > 0) {
-        const factor = Math.min(maxDisplacement, dist * 0.02);
+        const factor = Math.min(maxDisplacement, dist * 0.025);
         setEyeOffset({
           x: (dx / dist) * factor,
           y: (dy / dist) * factor
@@ -59,21 +79,27 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
   const handleMascotClick = (e) => {
     e.stopPropagation();
     
-    // Play laser click sound using Web Audio API
+    // Play dual-tone sound feedback
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(650, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.15);
+      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.18);
       gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.15);
-    } catch (e) {}
+      osc.stop(audioCtx.currentTime + 0.18);
+    } catch (err) {}
+
+    // Trigger hop & 360 degree spin!
+    setBotAnimationState('jump');
+    setTimeout(() => {
+      setBotAnimationState(isHovered ? 'hover' : 'idle');
+    }, 600);
 
     // Toggle bubble open/close
     if (showBubble) {
@@ -85,10 +111,40 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     }
   };
 
+  useEffect(() => {
+    if (isHovered && botAnimationState !== 'jump') {
+      setBotAnimationState('hover');
+    } else if (!isHovered && botAnimationState !== 'jump') {
+      setBotAnimationState('idle');
+    }
+  }, [isHovered, botAnimationState]);
+
+  // Animation variants
+  const mascotVariants = {
+    idle: {
+      y: [0, -6, 0],
+      rotate: 0,
+      scale: 1,
+      transition: { repeat: Infinity, duration: 4, ease: "easeInOut" }
+    },
+    hover: {
+      y: [0, -3, 0],
+      scale: 1.08,
+      rotate: [-1.5, 1.5, -1.5],
+      transition: { repeat: Infinity, duration: 1.6, ease: "easeInOut" }
+    },
+    jump: {
+      y: [0, -22, 0],
+      rotate: [0, 360],
+      scale: [1, 1.15, 0.9, 1],
+      transition: { duration: 0.6, ease: "easeInOut" }
+    }
+  };
+
   return (
     <div className="fixed bottom-8 right-6 z-40 font-mono flex items-end gap-3.5 pointer-events-none select-none max-w-[calc(100vw-2rem)]">
       
-      {/* 1. Holographic Speech/Task Bubble (TryHackMe Red Style Theme Mapped) */}
+      {/* 1. Holographic Speech/Task Bubble */}
       <AnimatePresence>
         {showBubble && (
           <motion.div
@@ -106,7 +162,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             <div className="flex items-center justify-between border-b border-cyber-bg-gray pb-1.5 mb-2 text-[9px] text-google-red font-bold">
               <div className="flex items-center gap-1.5">
                 <Shield size={11} className="animate-pulse text-google-red" />
-                <span>THM-STYLE AGENT V1.2</span>
+                <span>THM-STYLE AGENT V1.3</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-google-red animate-ping" />
             </div>
@@ -151,8 +207,8 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       {/* 2. Interactive Red-Hooded TryHackMe style Mascot Helper Bot */}
       <motion.div
         ref={botRef}
-        animate={isHovered ? { y: [0, -3, 0], scale: 1.03 } : { y: [0, -6, 0] }}
-        transition={{ repeat: Infinity, duration: isHovered ? 2 : 4, ease: "easeInOut" }}
+        animate={botAnimationState}
+        variants={mascotVariants}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleMascotClick}
@@ -208,13 +264,31 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             strokeWidth="2.5"
           />
 
+          {/* Cute pink blushes when hovered */}
+          {isHovered && (
+            <g>
+              <ellipse cx="33" cy="62" rx="3.5" ry="1.8" fill="rgba(244, 63, 94, 0.65)" filter="blur(0.5px)" />
+              <ellipse cx="67" cy="62" rx="3.5" ry="1.8" fill="rgba(244, 63, 94, 0.65)" filter="blur(0.5px)" />
+            </g>
+          )}
+
           {/* Pupils container translating based on mouse offsets */}
           <g style={{ transform: `translate(${eyeOffset.x}px, ${eyeOffset.y}px)` }} className="transition-transform duration-75">
-            <ellipse cx="41" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
-            <ellipse cx="59" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
-            
-            <circle cx="41.5" cy="51.5" r="1.5" fill="#EA4335" />
-            <circle cx="59.5" cy="51.5" r="1.5" fill="#EA4335" />
+            {isBlinking ? (
+              <>
+                {/* Cute blinking curved closed eyes */}
+                <path d="M 37.5 53 Q 41 55.5 44.5 53" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                <path d="M 55.5 53 Q 59 55.5 62.5 53" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+              </>
+            ) : (
+              <>
+                <ellipse cx="41" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
+                <ellipse cx="59" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
+                
+                <circle cx="41.5" cy="51.5" r="1.5" fill="#EA4335" />
+                <circle cx="59.5" cy="51.5" r="1.5" fill="#EA4335" />
+              </>
+            )}
           </g>
 
           {/* Glowing base reflection underneath bot */}

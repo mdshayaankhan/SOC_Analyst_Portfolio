@@ -55,7 +55,7 @@ const CyberMapHUD = () => {
   return (
     <>
       {/* Desktop HUD Panel (Visible on large screens >= 1024px) */}
-      <div className="fixed left-6 top-1/2 -translate-y-1/2 z-40 hidden lg:flex flex-col items-center">
+      <div className="fixed left-6 top-28 z-40 hidden lg:flex flex-col items-center">
         <div className="glassmorphism px-3 py-1.5 rounded-t-lg border-b-0 w-full text-center mb-1">
           <span className="font-mono text-[9px] tracking-widest text-google-blue font-bold uppercase animate-pulse">
             Journey Node Map
