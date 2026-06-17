@@ -63,18 +63,18 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     return () => clearInterval(interval);
   }, [isBlinking]);
 
-  // Periodic looking around to create awareness when idle
+  // Periodic looking around when idle
   useEffect(() => {
     const lookInterval = setInterval(() => {
       if (isHovered || isThinking) return;
       const rand = Math.random();
       if (rand < 0.25) {
         // Look left
-        setEyeLookOffset({ x: -3.5, y: 0 });
+        setEyeLookOffset({ x: -3, y: 0 });
         setTimeout(() => setEyeLookOffset({ x: 0, y: 0 }), 1400);
       } else if (rand < 0.5) {
         // Look right
-        setEyeLookOffset({ x: 3.5, y: 0 });
+        setEyeLookOffset({ x: 3, y: 0 });
         setTimeout(() => setEyeLookOffset({ x: 0, y: 0 }), 1400);
       }
     }, 7000);
@@ -82,7 +82,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     return () => clearInterval(lookInterval);
   }, [isHovered, isThinking]);
 
-  // Track cursor coordinate offsets relative to the bot center
+  // Track cursor offsets relative to the bot center
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!botRef.current) return;
@@ -96,7 +96,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
 
       const maxDisplacement = 4.5;
       if (dist > 0) {
-        const factor = Math.min(maxDisplacement, dist * 0.02);
+        const factor = Math.min(maxDisplacement, dist * 0.025);
         setMouseOffset({
           x: (dx / dist) * factor,
           y: (dy / dist) * factor
@@ -111,7 +111,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
   const handleMascotClick = (e) => {
     e.stopPropagation();
     
-    // Play sci-fi system chime sound using Web Audio API
+    // Play sci-fi system chime sound
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const osc = audioCtx.createOscillator();
@@ -127,26 +127,22 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       osc.stop(audioCtx.currentTime + 0.12);
     } catch (err) {}
 
-    // Trigger simulation of thinking state on mascot click
     setIsThinking(true);
     setTimeout(() => {
       setIsThinking(false);
       const rand = Math.floor(Math.random() * botQuotes.length);
       setQuoteIdx(rand);
-      
-      // Toggle bubble
       if (!showBubble) {
         setShowBubble(true);
       }
     }, 1500);
   };
 
-  // Combine look offsets (mouse tracking overrides periodic idle looks)
   const activeEyeOffset = isHovered 
     ? mouseOffset 
     : eyeLookOffset;
 
-  // Floating behavior
+  // Unified Floating container variants (Head and Cloak stay connected, no gap!)
   const containerVariants = {
     idle: {
       y: [0, -10, 0],
@@ -159,22 +155,21 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     }
   };
 
-  // Cloak swaying behavior (wind/air simulation)
+  // Cloak swaying behavior (wind/air simulation, only horizontal skew/rotate to keep connection!)
   const cloakVariants = {
     idle: {
       rotate: [-1.2, 1.2, -1.2],
-      skewX: [-1.8, 1.8, -1.8],
+      skewX: [-1.5, 1.5, -1.5],
       transition: { repeat: Infinity, duration: 3.2, ease: "easeInOut" }
     },
     thinking: {
       rotate: [-0.4, 0.4, -0.4],
       skewX: [-0.6, 0.6, -0.6],
-      scaleY: [1, 1.02, 1], // Breathing scale
       transition: { repeat: Infinity, duration: 4.5, ease: "easeInOut" }
     },
     hover: {
-      rotate: [-2.5, 2.5, -2.5],
-      skewX: [-3.5, 3.5, -3.5],
+      rotate: [-2.2, 2.2, -2.2],
+      skewX: [-3, 3, -3],
       transition: { repeat: Infinity, duration: 1.6, ease: "easeInOut" }
     }
   };
@@ -243,30 +238,30 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
         )}
       </AnimatePresence>
 
-      {/* 2. Interactive SVG Mascot Agent */}
+      {/* 2. Unified Mascot Body Container (Ensures head and body float together - no gap!) */}
       <motion.div
         ref={botRef}
         animate={isHovered ? "hover" : isThinking ? "thinking" : "idle"}
         variants={containerVariants}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleMascotClick}
         className="w-[100px] h-[100px] md:w-[155px] md:h-[155px] cursor-pointer pointer-events-auto filter drop-shadow-[0_0_15px_rgba(234,67,53,0.5)] active:scale-95 transition-all"
         title="SecBot AI Assistant - Click to query"
+        onClick={handleMascotClick}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
           <defs>
-            {/* Glossy Red Hood Gradient */}
+            {/* Glossy Red Gradient */}
             <linearGradient id="hoodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#ff5847" />
               <stop offset="50%" stopColor="#EA4335" />
-              <stop offset="100%" stopColor="#a31d12" />
+              <stop offset="100%" stopColor="#9e1a10" />
             </linearGradient>
 
             {/* Dark Face Panel Gradient */}
             <linearGradient id="faceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#1E2026" />
-              <stop offset="100%" stopColor="#0F1013" />
+              <stop offset="100%" stopColor="#0B0C0E" />
             </linearGradient>
 
             {/* Cyan Eye Glow Filter */}
@@ -305,56 +300,56 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             )}
           </AnimatePresence>
 
-          {/* LAYER 1: Feet (Static shadow background) */}
+          {/* LAYER 1: Feet (Positioned directly under cloak rolls) */}
           <g>
-            <ellipse cx="74" cy="180" rx="13" ry="5.5" fill="#111111" />
-            <ellipse cx="126" cy="180" rx="13" ry="5.5" fill="#111111" />
+            <ellipse cx="80" cy="180" rx="14" ry="5" fill="#111111" />
+            <ellipse cx="120" cy="180" rx="14" ry="5" fill="#111111" />
           </g>
 
           {/* LAYER 2: Wrapped Pleated Cloak (Air Wind Swaying Animation) */}
           <motion.g
             animate={isThinking ? "thinking" : isHovered ? "hover" : "idle"}
             variants={cloakVariants}
-            style={{ originX: 0.5, originY: 0.53 }}
+            style={{ originX: 0.5, originY: 0.51 }}
           >
-            {/* Main Cloak Contour Path */}
+            {/* Main Cloak Contour Path - Bell Silhouette */}
             <path
-              d="M 60 106 
-                 C 48 116, 26 142, 26 166 
-                 C 26 182, 44 182, 54 182 
-                 C 74 182, 84 182, 100 182 
-                 C 116 182, 126 182, 146 182 
-                 C 156 182, 174 182, 174 166 
-                 C 174 142, 152 116, 140 106 Z"
+              d="M 62 102 
+                 C 62 102, 35 130, 35 174 
+                 C 35 178, 45 178, 50 178 
+                 C 65 178, 75 178, 100 178 
+                 C 125 178, 135 178, 150 178 
+                 C 155 178, 165 178, 165 174 
+                 C 165 130, 138 102, 138 102 Z"
               fill="url(#hoodGrad)"
               stroke="#EA4335"
               strokeWidth="0.8"
             />
 
-            {/* 3D Vertical Pleats/Creases (Individually styled for depth) */}
-            <path d="M 46 106 C 38 126, 32 148, 34 168" stroke="#7a120a" strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.85" />
-            <path d="M 70 106 C 62 128, 56 152, 58 172" stroke="#8c140b" strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.85" />
-            <path d="M 92 106 C 86 130, 82 154, 84 175" stroke="#7a120a" strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.85" />
-            <path d="M 108 106 C 114 130, 118 154, 116 175" stroke="#7a120a" strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.85" />
-            <path d="M 130 106 C 138 128, 144 152, 142 172" stroke="#8c140b" strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.85" />
-            <path d="M 154 106 C 162 126, 168 148, 166 168" stroke="#7a120a" strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.85" />
+            {/* 3D Vertical Pleats/Creases matching the second image */}
+            <path d="M 68 102 C 60 125, 56 148, 58 172" stroke="#7a120a" strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.85" />
+            <path d="M 84 102 C 78 128, 72 152, 70 174" stroke="#8c140b" strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.85" />
+            <path d="M 91 102 C 86 128, 83 152, 84 176" stroke="#7a120a" strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.85" />
+            <path d="M 109 102 C 114 128, 117 152, 116 176" stroke="#7a120a" strokeWidth="2.6" strokeLinecap="round" fill="none" opacity="0.85" />
+            <path d="M 130 102 C 122 128, 128 152, 130 174" stroke="#8c140b" strokeWidth="2.4" strokeLinecap="round" fill="none" opacity="0.85" />
+            <path d="M 142 102 C 140 125, 144 148, 142 172" stroke="#7a120a" strokeWidth="2.2" strokeLinecap="round" fill="none" opacity="0.85" />
 
             {/* Bottom cylinder rolled openings for premium 3D edge finish */}
-            <ellipse cx="34" cy="168" rx="8.5" ry="4" fill="#600b05" />
-            <ellipse cx="58" cy="172" rx="10" ry="4.5" fill="#600b05" />
-            <ellipse cx="84" cy="175" rx="11" ry="5" fill="#600b05" />
-            <ellipse cx="116" cy="175" rx="11" ry="5" fill="#600b05" />
-            <ellipse cx="142" cy="172" rx="10" ry="4.5" fill="#600b05" />
-            <ellipse cx="166" cy="168" rx="8.5" ry="4" fill="#600b05" />
+            <ellipse cx="46.5" cy="174" rx="11" ry="4.5" fill="#600b05" />
+            <ellipse cx="70" cy="176" rx="12" ry="5" fill="#600b05" />
+            <ellipse cx="91" cy="178" rx="12.5" ry="5.5" fill="#600b05" />
+            <ellipse cx="109" cy="178" rx="12.5" ry="5.5" fill="#600b05" />
+            <ellipse cx="130" cy="176" rx="12" ry="5" fill="#600b05" />
+            <ellipse cx="153.5" cy="174" rx="11" ry="4.5" fill="#600b05" />
 
             {/* Glossy Highlights on pleat ridges */}
-            <path d="M 36 122 C 30 138, 28 152, 32 163" stroke="#ffa399" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.25" />
-            <path d="M 60 120 C 56 138, 54 152, 56 165" stroke="#ffa399" strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.25" />
-            <path d="M 86 118 C 84 138, 80 152, 82 168" stroke="#ffa399" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.25" />
-            <path d="M 114 118 C 116 138, 120 152, 118 168" stroke="#ffa399" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.25" />
+            <path d="M 52 118 C 46 134, 40 148, 44 162" stroke="#ffa399" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.25" />
+            <path d="M 74 116 C 70 134, 66 148, 68 164" stroke="#ffa399" strokeWidth="1.4" strokeLinecap="round" fill="none" opacity="0.25" />
+            <path d="M 93 114 C 91 134, 88 148, 90 166" stroke="#ffa399" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.25" />
+            <path d="M 117 114 C 119 134, 122 148, 120 166" stroke="#ffa399" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.25" />
 
             {/* Green Status Indicator Button on the bottom-right pleat */}
-            <g transform="translate(150, 156)">
+            <g transform="translate(150, 154)">
               <circle cx="0" cy="0" r="7.5" fill="#1A1D24" stroke="#600b05" strokeWidth="1.5" />
               <motion.circle 
                 cx="0" 
@@ -370,37 +365,37 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
 
           {/* LAYER 3: Hood with glossy outer rim & wizard tail */}
           <g>
-            {/* Hood Base Outline (Glossy Red) */}
+            {/* Hood Base Outline (Round with curved tail to top-right) */}
             <path
-              d="M 50 106 
-                 C 22 106, 16 80, 16 56 
-                 C 16 32, 38 24, 64 24 
-                 C 78 24, 88 18, 102 10 
-                 C 114 3, 128 0, 140 8 
-                 C 149 14, 145 28, 134 26 
-                 C 124 24, 118 36, 118 46 
-                 C 118 52, 124 54, 128 54 
-                 C 140 54, 148 68, 148 84 
-                 C 148 98, 134 106, 114 106 Z"
+              d="M 60 102 
+                 C 32 102, 32 72, 32 50 
+                 C 32 26, 56 16, 100 16 
+                 C 118 16, 130 22, 142 22 
+                 C 155 22, 165 14, 165 25 
+                 C 165 34, 158 38, 152 38 
+                 C 146 38, 144 32, 150 28 
+                 C 154 26, 154 28, 150 30 
+                 C 144 32, 132 38, 130 48 
+                 C 138 56, 148 72, 148 102 Z"
               fill="url(#hoodGrad)"
-              stroke="#ffffff"
-              strokeWidth="1.5"
+              stroke="#EA4335"
+              strokeWidth="0.8"
             />
 
             {/* Double-layered Collar Rim (Thick edge around the face opening) */}
-            <ellipse cx="100" cy="68" rx="34" ry="29" fill="none" stroke="#7a120a" strokeWidth="5.5" />
-            <ellipse cx="100" cy="68" rx="34" ry="29" fill="none" stroke="url(#hoodGrad)" strokeWidth="3" />
-            <ellipse cx="100" cy="68" rx="34" ry="29" fill="none" stroke="#ffa399" strokeWidth="1" opacity="0.3" />
+            <ellipse cx="100" cy="68" rx="35" ry="30" fill="none" stroke="#7a120a" strokeWidth="5.5" />
+            <ellipse cx="100" cy="68" rx="35" ry="30" fill="none" stroke="url(#hoodGrad)" strokeWidth="3" />
+            <ellipse cx="100" cy="68" rx="35" ry="30" fill="none" stroke="#ffa399" strokeWidth="1.2" opacity="0.3" />
 
-            {/* Dark Face Screen Panel */}
+            {/* Dark Screen Face */}
             <ellipse
               cx="100"
               cy="68"
               rx="28"
               ry="23"
               fill="url(#faceGrad)"
-              stroke="#EA4335"
-              strokeWidth="0.8"
+              stroke="rgba(234, 67, 53, 0.4)"
+              strokeWidth="1.5"
             />
 
             {/* Face details group (Eyes and Mouth) */}
@@ -412,37 +407,37 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
               >
                 {isBlinking ? (
                   <>
-                    {/* Blink: Flat curved lines */}
-                    <path d="M 80 68 Q 88 71 96 68" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
-                    <path d="M 104 68 Q 112 71 120 68" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" fill="none" />
+                    {/* Blink: Curved closed eyes lines */}
+                    <path d="M 76 68 Q 84 71 92 68" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" fill="none" />
+                    <path d="M 108 68 Q 116 71 124 68" stroke="#FFFFFF" strokeWidth="3.2" strokeLinecap="round" fill="none" />
                   </>
                 ) : (
                   <>
-                    {/* Glowing White Eyes with Cyan/Blue Inner Shadow */}
+                    {/* Glowing White Eyes with Cyan/Blue Inner Glow */}
                     <ellipse 
-                      cx={88 + activeEyeOffset.x} 
+                      cx={84 + activeEyeOffset.x} 
                       cy={68 + activeEyeOffset.y} 
-                      rx="7.5" 
-                      ry="11" 
+                      rx="8" 
+                      ry="12" 
                       fill="#FFFFFF" 
                       filter="url(#cyanGlow)" 
                     />
                     <ellipse 
-                      cx={112 + activeEyeOffset.x} 
+                      cx={116 + activeEyeOffset.x} 
                       cy={68 + activeEyeOffset.y} 
-                      rx="7.5" 
-                      ry="11" 
+                      rx="8" 
+                      ry="12" 
                       fill="#FFFFFF" 
                       filter="url(#cyanGlow)" 
                     />
                     
-                    {/* Soft cyan inner glow accents */}
-                    <ellipse cx={88 + activeEyeOffset.x} cy={68 + activeEyeOffset.y} rx="5" ry="8.2" fill="none" stroke="#4285F4" strokeWidth="1.2" opacity="0.45" />
-                    <ellipse cx={112 + activeEyeOffset.x} cy={68 + activeEyeOffset.y} rx="5" ry="8.2" fill="none" stroke="#4285F4" strokeWidth="1.2" opacity="0.45" />
+                    {/* Soft cyan inner glow stroke */}
+                    <ellipse cx={84 + activeEyeOffset.x} cy={68 + activeEyeOffset.y} rx="5.5" ry="9.2" fill="none" stroke="#4285F4" strokeWidth="1.2" opacity="0.45" />
+                    <ellipse cx={116 + activeEyeOffset.x} cy={68 + activeEyeOffset.y} rx="5.5" ry="9.2" fill="none" stroke="#4285F4" strokeWidth="1.2" opacity="0.45" />
                     
-                    {/* Tiny reflection sparkles */}
-                    <circle cx={85.5 + activeEyeOffset.x} cy={64.5 + activeEyeOffset.y} r="1.5" fill="#FFFFFF" />
-                    <circle cx="109.5" cy="64.5" r="1.5" fill="#FFFFFF" />
+                    {/* Highlight Sparkles */}
+                    <circle cx={81.5 + activeEyeOffset.x} cy="64.5" r="1.5" fill="#FFFFFF" />
+                    <circle cx="113.5" cy="64.5" r="1.5" fill="#FFFFFF" />
                   </>
                 )}
               </motion.g>
@@ -453,9 +448,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
                   ? "M 96 78 Q 100 81 104 78" 
                   : isHovered 
                     ? "M 95 78 Q 100 81.5 105 78" 
-                    : "M 97 78 Q 100 80 103 78"} 
+                    : "M 96 79 Q 100 81.5 104 79"} 
                 stroke="#FFFFFF" 
-                strokeWidth="1.6" 
+                strokeWidth="1.8" 
                 strokeLinecap="round" 
                 fill="none" 
               />
@@ -463,7 +458,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
 
             {/* Glossy highlight line on hood curve */}
             <path
-              d="M 32 46 C 36 32, 54 27, 68 27"
+              d="M 44 42 C 48 30, 68 25, 84 25"
               stroke="#ffffff"
               strokeWidth="2.2"
               strokeLinecap="round"
@@ -477,19 +472,19 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             <>
               {/* Dotted target rings around eyes */}
               <motion.circle
-                cx="88" cy="68" r="16"
+                cx="84" cy="68" r="16.5"
                 stroke="#4285F4" strokeWidth="1.5" strokeDasharray="3 3" fill="none"
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                style={{ originX: '88px', originY: '68px' }}
+                style={{ originX: '84px', originY: '68px' }}
                 opacity="0.8"
               />
               <motion.circle
-                cx="112" cy="68" r="16"
+                cx="116" cy="68" r="16.5"
                 stroke="#4285F4" strokeWidth="1.5" strokeDasharray="3 3" fill="none"
                 animate={{ rotate: -360 }}
                 transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                style={{ originX: '112px', originY: '68px' }}
+                style={{ originX: '116px', originY: '68px' }}
                 opacity="0.8"
               />
 
