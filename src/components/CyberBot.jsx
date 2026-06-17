@@ -42,10 +42,10 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     };
 
     const interval = setInterval(() => {
-      if (Math.random() > 0.3) {
+      if (Math.random() > 0.35) {
         blinkCycle();
       }
-    }, 3800);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, []);
@@ -62,9 +62,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       const dy = e.clientY - botCenterY;
       const dist = Math.hypot(dx, dy);
 
-      const maxDisplacement = 5;
+      const maxDisplacement = 4.5;
       if (dist > 0) {
-        const factor = Math.min(maxDisplacement, dist * 0.025);
+        const factor = Math.min(maxDisplacement, dist * 0.02);
         setEyeOffset({
           x: (dx / dist) * factor,
           y: (dy / dist) * factor
@@ -79,27 +79,27 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
   const handleMascotClick = (e) => {
     e.stopPropagation();
     
-    // Play dual-tone sound feedback
+    // Play laser jump sound using Web Audio API
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.18);
+      osc.frequency.setValueAtTime(580, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(280, audioCtx.currentTime + 0.2);
       gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
       osc.connect(gain);
       gain.connect(audioCtx.destination);
       osc.start();
-      osc.stop(audioCtx.currentTime + 0.18);
+      osc.stop(audioCtx.currentTime + 0.2);
     } catch (err) {}
 
     // Trigger hop & 360 degree spin!
     setBotAnimationState('jump');
     setTimeout(() => {
       setBotAnimationState(isHovered ? 'hover' : 'idle');
-    }, 600);
+    }, 650);
 
     // Toggle bubble open/close
     if (showBubble) {
@@ -119,24 +119,42 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     }
   }, [isHovered, botAnimationState]);
 
-  // Animation variants
-  const mascotVariants = {
+  // Head variants (Floating/Swaying)
+  const headVariants = {
     idle: {
-      y: [0, -6, 0],
-      rotate: 0,
-      scale: 1,
-      transition: { repeat: Infinity, duration: 4, ease: "easeInOut" }
+      y: [0, -4, 0],
+      rotate: [-0.5, 0.5, -0.5],
+      transition: { repeat: Infinity, duration: 3.5, ease: "easeInOut" }
     },
     hover: {
-      y: [0, -3, 0],
-      scale: 1.08,
-      rotate: [-1.5, 1.5, -1.5],
-      transition: { repeat: Infinity, duration: 1.6, ease: "easeInOut" }
+      y: [0, -2, 0],
+      rotate: [-1, 1, -1],
+      transition: { repeat: Infinity, duration: 1.5, ease: "easeInOut" }
     },
     jump: {
       y: [0, -22, 0],
       rotate: [0, 360],
-      scale: [1, 1.15, 0.9, 1],
+      transition: { duration: 0.6, ease: "easeInOut" }
+    }
+  };
+
+  // Cloak curtain variants (Wavy wind/air effect)
+  const cloakVariants = {
+    idle: {
+      rotate: [-1.8, 1.8, -1.8],
+      skewX: [-2.5, 2.5, -2.5],
+      scaleY: [1, 1.02, 1],
+      transition: { repeat: Infinity, duration: 2.8, ease: "easeInOut" }
+    },
+    hover: {
+      rotate: [-3.5, 3.5, -3.5],
+      skewX: [-4.5, 4.5, -4.5],
+      scaleY: [0.97, 1.03, 0.97],
+      transition: { repeat: Infinity, duration: 1.3, ease: "easeInOut" }
+    },
+    jump: {
+      scaleY: [1, 0.8, 1.15, 1],
+      skewX: [-4, 4, 0],
       transition: { duration: 0.6, ease: "easeInOut" }
     }
   };
@@ -162,7 +180,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             <div className="flex items-center justify-between border-b border-cyber-bg-gray pb-1.5 mb-2 text-[9px] text-google-red font-bold">
               <div className="flex items-center gap-1.5">
                 <Shield size={11} className="animate-pulse text-google-red" />
-                <span>THM-STYLE AGENT V1.3</span>
+                <span>THM-STYLE AGENT V1.4</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-google-red animate-ping" />
             </div>
@@ -204,22 +222,20 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
         )}
       </AnimatePresence>
 
-      {/* 2. Interactive Red-Hooded TryHackMe style Mascot Helper Bot */}
-      <motion.div
+      {/* 2. Interactive Red-Hooded TryHackMe style Mascot Helper Bot with air-blown curtain body */}
+      <div
         ref={botRef}
-        animate={botAnimationState}
-        variants={mascotVariants}
+        className="w-18 h-18 cursor-pointer pointer-events-auto filter drop-shadow-[0_0_12px_rgba(234,67,53,0.55)] active:scale-95 transition-all"
+        title="THM-SecBot - Click to toggle console"
+        onClick={handleMascotClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleMascotClick}
-        className="w-16 h-16 cursor-pointer pointer-events-auto filter drop-shadow-[0_0_10px_rgba(234,67,53,0.6)] active:scale-95 transition-all"
-        title="THM-SecBot - Click to toggle console"
       >
-        <svg viewBox="0 0 100 100" className="w-full h-full">
+        <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
           <defs>
             <linearGradient id="hoodRedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#EA4335" />
-              <stop offset="100%" stopColor="#a31d12" />
+              <stop offset="100%" stopColor="#8c140b" />
             </linearGradient>
             <linearGradient id="faceDarkGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#1C1E24" />
@@ -227,81 +243,101 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             </linearGradient>
           </defs>
 
-          {/* Outer Hood Body (Red Gradient with clean white outline) */}
-          <path
-            d="M 50 15 
-               C 28 15, 20 40, 20 62 
-               C 20 78, 31 82, 40 84 
-               C 44 85, 45 79, 48 77 
-               C 50 76, 50 76, 52 77
-               C 55 79, 56 85, 60 84 
-               C 69 82, 80 78, 80 62 
-               C 80 40, 72 15, 50 15 Z"
-            fill="url(#hoodRedGrad)"
-            stroke="#ffffff"
-            strokeWidth="3.2"
-          />
+          {/* LAYER 1: Wrapped body curtain (Sways independently to mimic air effect) */}
+          <motion.g
+            animate={botAnimationState}
+            variants={cloakVariants}
+            style={{ originX: 0.5, originY: 0.68 }}
+          >
+            {/* Wavy Phantom Cloak Body */}
+            <path
+              d="M 32 66 
+                 C 26 73, 14 85, 20 93 
+                 C 26 97, 38 91, 50 95 
+                 C 62 91, 74 97, 80 93 
+                 C 86 85, 74 73, 68 66 Z"
+              fill="url(#hoodRedGrad)"
+              stroke="#ffffff"
+              strokeWidth="2.8"
+            />
+            {/* Dark inner folds/shadows for 3D curtain effect */}
+            <path d="M 38 70 C 34 78, 30 85, 34 91" stroke="#600b05" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+            <path d="M 50 72 C 49 80, 48 86, 50 91" stroke="#600b05" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+            <path d="M 62 70 C 66 78, 70 85, 66 91" stroke="#600b05" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+          </motion.g>
 
-          {/* Wizard Hood tail curve */}
-          <path
-            d="M 50 15
-               C 55 9, 68 7, 77 16
-               C 79 18, 77 23, 72 20
-               C 67 17, 58 16, 50 15 Z"
-            fill="#EA4335"
-            stroke="#ffffff"
-            strokeWidth="1.5"
-          />
+          {/* LAYER 2: Hood, Face, and Eyes (Floats slightly offset from cloak) */}
+          <motion.g
+            animate={botAnimationState}
+            variants={headVariants}
+            style={{ originX: 0.5, originY: 0.5 }}
+          >
+            {/* Outer Hood Head + top-right wizard tail */}
+            <path
+              d="M 30 68 
+                 C 24 64, 22 46, 28 36 
+                 C 34 26, 42 22, 50 20 
+                 C 58 18, 66 12, 74 14 
+                 C 82 16, 88 10, 92 14 
+                 C 95 17, 95 24, 88 24 
+                 C 80 24, 76 34, 70 38 
+                 C 76 46, 76 64, 70 68 
+                 C 64 74, 36 74, 30 68 Z"
+              fill="url(#hoodRedGrad)"
+              stroke="#ffffff"
+              strokeWidth="2.8"
+            />
 
-          {/* Dark Screen Face */}
-          <ellipse
-            cx="50"
-            cy="53"
-            rx="20"
-            ry="16"
-            fill="url(#faceDarkGrad)"
-            stroke="rgba(234, 67, 53, 0.5)"
-            strokeWidth="2.5"
-          />
+            {/* Dark Screen Face */}
+            <ellipse
+              cx="50"
+              cy="53"
+              rx="20"
+              ry="16"
+              fill="url(#faceDarkGrad)"
+              stroke="rgba(234, 67, 53, 0.4)"
+              strokeWidth="2.2"
+            />
 
-          {/* Cute pink blushes when hovered */}
-          {isHovered && (
-            <g>
-              <ellipse cx="33" cy="62" rx="3.5" ry="1.8" fill="rgba(244, 63, 94, 0.65)" filter="blur(0.5px)" />
-              <ellipse cx="67" cy="62" rx="3.5" ry="1.8" fill="rgba(244, 63, 94, 0.65)" filter="blur(0.5px)" />
-            </g>
-          )}
-
-          {/* Pupils container translating based on mouse offsets */}
-          <g style={{ transform: `translate(${eyeOffset.x}px, ${eyeOffset.y}px)` }} className="transition-transform duration-75">
-            {isBlinking ? (
-              <>
-                {/* Cute blinking curved closed eyes */}
-                <path d="M 37.5 53 Q 41 55.5 44.5 53" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-                <path d="M 55.5 53 Q 59 55.5 62.5 53" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-              </>
-            ) : (
-              <>
-                <ellipse cx="41" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
-                <ellipse cx="59" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
-                
-                <circle cx="41.5" cy="51.5" r="1.5" fill="#EA4335" />
-                <circle cx="59.5" cy="51.5" r="1.5" fill="#EA4335" />
-              </>
+            {/* Cute pink blushes when hovered */}
+            {isHovered && (
+              <g>
+                <ellipse cx="33" cy="62" rx="3.5" ry="1.8" fill="rgba(244, 63, 94, 0.65)" filter="blur(0.5px)" />
+                <ellipse cx="67" cy="62" rx="3.5" ry="1.8" fill="rgba(244, 63, 94, 0.65)" filter="blur(0.5px)" />
+              </g>
             )}
-          </g>
 
-          {/* Glowing base reflection underneath bot */}
+            {/* Pupils container translating based on mouse offsets */}
+            <g style={{ transform: `translate(${eyeOffset.x}px, ${eyeOffset.y}px)` }} className="transition-transform duration-75">
+              {isBlinking ? (
+                <>
+                  {/* Cute blinking curved closed eyes */}
+                  <path d="M 37.5 53 Q 41 55.5 44.5 53" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                  <path d="M 55.5 53 Q 59 55.5 62.5 53" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                </>
+              ) : (
+                <>
+                  <ellipse cx="41" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
+                  <ellipse cx="59" cy="53" rx="4.5" ry="6.5" fill="#FFFFFF" />
+                  
+                  <circle cx="41.5" cy="51.5" r="1.5" fill="#EA4335" />
+                  <circle cx="59.5" cy="51.5" r="1.5" fill="#EA4335" />
+                </>
+              )}
+            </g>
+          </motion.g>
+
+          {/* Floating base shadow beneath cloak */}
           <ellipse
             cx="50"
-            cy="92"
-            rx="22"
-            ry="3"
+            cy="97"
+            rx="18"
+            ry="2.5"
             fill="rgba(234, 67, 53, 0.35)"
             filter="blur(1.5px)"
           />
         </svg>
-      </motion.div>
+      </div>
 
     </div>
   );
