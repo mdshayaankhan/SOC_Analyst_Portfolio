@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Orbitron:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+:root {
+  --cyber-bg-darkest: #050816;
+  --cyber-bg-darker: #0B1023;
+  --cyber-bg-gray: #111827;
+  --cyber-text-white: #FFFFFF;
+  --cyber-text-light: #C9D1D9;
+  --cyber-text-muted: #94A3B8;
+  --glass-bg: rgba(11, 16, 35, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+:root.light {
+  --cyber-bg-darkest: #F8FAFC;  /* Light slate background */
+  --cyber-bg-darker: #F1F5F9;   /* Sleek light gray card base */
+  --cyber-bg-gray: #E2E8F0;     /* Border dividers */
+  --cyber-text-white: #0F172A;  /* Dark slate headers */
+  --cyber-text-light: #334155;  /* Secondary text */
+  --cyber-text-muted: #64748B;  /* Muted metadata labels */
+  --glass-bg: rgba(255, 255, 255, 0.68);
+  --glass-border: rgba(15, 23, 42, 0.08);
+}
+
+@theme {
+  --color-google-blue: #4285F4;
+  --color-google-red: #EA4335;
+  --color-google-yellow: #FBBC05;
+  --color-google-green: #34A853;
+  --color-cyber-bg-darkest: var(--cyber-bg-darkest);
+  --color-cyber-bg-darker: var(--cyber-bg-darker);
+  --color-cyber-bg-gray: var(--cyber-bg-gray);
+  --color-cyber-text-white: var(--cyber-text-white);
+  --color-cyber-text-light: var(--cyber-text-light);
+  --color-cyber-text-muted: var(--cyber-text-muted);
+
+  --font-orbitron: 'Orbitron', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Base resets and styles */
+html, body {
+  scroll-behavior: smooth;
+  background-color: var(--cyber-bg-darkest);
+  color: var(--cyber-text-light);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cyber-bg-darkest);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--cyber-bg-gray);
+  border: 1px solid rgba(66, 133, 244, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4285F4;
+  box-shadow: 0 0 8px #4285F4;
+}
+
+/* Root sizing fix */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: var(--cyber-bg-darkest);
+  transition: background-color 0.3s ease;
+}
+
+/* Scanlines and Cyber overlays */
+.cyber-grid {
+  background-image: 
+    linear-gradient(rgba(66, 133, 244, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(66, 133, 244, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+.scanline::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+  z-index: 9999;
+  background-size: 100% 6px;
+  pointer-events: none;
+  opacity: 0.07;
+}
+
+.glassmorphism {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.glassmorphism-blue {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(66, 133, 244, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(66, 133, 244, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.glassmorphism-red {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(234, 67, 53, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(234, 67, 53, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.glassmorphism-yellow {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(251, 188, 5, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(251, 188, 5, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.glassmorphism-green {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(52, 168, 83, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(52, 168, 83, 0.1);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.glow-text-blue {
+  text-shadow: 0 0 10px rgba(66, 133, 244, 0.6);
+}
+.glow-text-red {
+  text-shadow: 0 0 10px rgba(234, 67, 53, 0.6);
+}
+.glow-text-yellow {
+  text-shadow: 0 0 10px rgba(251, 188, 5, 0.6);
+}
+.glow-text-green {
+  text-shadow: 0 0 10px rgba(52, 168, 83, 0.6);
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.animate-scan {
+  animation: scan-line 6s linear infinite;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.03); }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 5s ease-in-out infinite;
+}
+
+/* Clip paths and futuristic borders */
+.cyber-corner-border {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 15px) 0,
+    100% 15px,
+    100% 100%,
+    15px 100%,
+    0 calc(100% - 15px)
+  );
+}
+
+.cyber-button {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 10px) 0,
+    100% 10px,
+    100% 100%,
+    10px 100%,
+    0 calc(100% - 10px)
+  );
+}
