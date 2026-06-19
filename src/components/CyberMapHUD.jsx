@@ -95,7 +95,7 @@ const CyberMapHUD = () => {
                 >
                   <Icon
                     size={11}
-                    style={{ color: isActive ? node.color : '#94A3B8' }}
+                    style={{ color: isActive ? node.color : 'var(--cyber-text-muted)' }}
                     className={isActive ? 'animate-pulse' : 'group-hover:text-cyber-text-white'}
                   />
                 </div>
@@ -177,7 +177,7 @@ const CyberMapHUD = () => {
                       backgroundColor: isActive ? 'rgba(0,0,0,0.3)' : 'transparent',
                     }}
                   >
-                    <Icon size={10} style={{ color: isActive ? node.color : '#94A3B8' }} />
+                    <Icon size={10} style={{ color: isActive ? node.color : 'var(--cyber-text-muted)' }} />
                   </div>
                   <span className={`font-mono text-[10px] ${isActive ? 'text-cyber-text-white font-bold' : 'text-cyber-text-muted'}`}>
                     {node.title}

@@ -116,7 +116,7 @@ const LabLogFlow = () => {
                   boxShadow: isSelected ? `0 0 16px ${node.color}` : 'none'
                 }}
               >
-                <Icon size={24} style={{ color: isSelected ? node.color : '#94A3B8' }} />
+                <Icon size={24} style={{ color: isSelected ? node.color : 'var(--cyber-text-muted)' }} />
               </button>
               <span className={`text-[10px] font-mono mt-2 text-center transition-all ${
                 isSelected ? 'text-cyber-text-white font-bold' : 'text-cyber-text-muted'

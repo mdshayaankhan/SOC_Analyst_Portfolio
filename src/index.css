@@ -15,15 +15,61 @@
 }
 
 :root.light {
-  --cyber-bg-darkest: #F8FAFC;  /* Light slate background */
-  --cyber-bg-darker: #F1F5F9;   /* Sleek light gray card base */
-  --cyber-bg-gray: #CBD5E1;     /* Slate-300 for clearer borders */
-  --cyber-text-white: #0F172A;  /* Dark slate headers */
-  --cyber-text-light: #1E293B;  /* Secondary text - slate-800 for high contrast */
-  --cyber-text-muted: #475569;  /* Muted metadata labels - slate-600 */
-  --cyber-text-muted-bright: #334155; /* Higher contrast slate-700 */
-  --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(15, 23, 42, 0.12);
+  --cyber-bg-darkest: #FFFFFF;  /* Crisp white background */
+  --cyber-bg-darker: #F8FAFC;   /* Slate-50 panel card base */
+  --cyber-bg-gray: #E2E8F0;     /* Slate-200 border grids */
+  --cyber-text-white: #020617;  /* High contrast Slate-950 for primary headings */
+  --cyber-text-light: #0F172A;  /* High contrast Slate-900 for body text */
+  --cyber-text-muted: #334155;  /* Defined Slate-700 for labels */
+  --cyber-text-muted-bright: #1E293B; /* Crisp Slate-800 */
+  --glass-bg: rgba(255, 255, 255, 0.90); /* Highly opaque white for clear card backing */
+  --glass-border: rgba(66, 133, 244, 0.15); /* Premium Google Blue tinted glass border */
+}
+
+/* Light mode specific clarity overrides - dont touch dark mode */
+:root.light .scanline::after {
+  display: none !important; /* Disable scanlines to keep screen bright and clean */
+}
+
+:root.light .cyber-grid {
+  background-image: 
+    linear-gradient(rgba(66, 133, 244, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(66, 133, 244, 0.03) 1px, transparent 1px) !important;
+}
+
+/* Bypass tailwind opacity modifiers for text in light mode to guarantee high readability */
+:root.light [class*="text-cyber-text-light/"] {
+  color: var(--cyber-text-light) !important;
+}
+:root.light [class*="text-cyber-text-muted/"] {
+  color: var(--cyber-text-muted) !important;
+}
+:root.light [class*="text-cyber-text-white/"] {
+  color: var(--cyber-text-white) !important;
+}
+:root.light [class*="text-google-blue/"] {
+  color: var(--color-google-blue) !important;
+}
+:root.light [class*="text-google-red/"] {
+  color: var(--color-google-red) !important;
+}
+:root.light [class*="text-google-yellow/"] {
+  color: var(--color-google-yellow) !important;
+}
+:root.light [class*="text-google-green/"] {
+  color: var(--color-google-green) !important;
+}
+
+/* Define card glassmorphism colors in light mode */
+:root.light .glassmorphism {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.04) !important;
+}
+:root.light .glassmorphism-blue {
+  background: var(--glass-bg) !important;
+  border-color: var(--glass-border) !important;
+  box-shadow: 0 10px 25px -5px rgba(66, 133, 244, 0.06) !important;
 }
 
 @theme {
@@ -231,7 +277,7 @@ html, body {
 }
 
 .agent-breathe-wrapper {
-  animation: breathe 4s ease-in-out infinite;
+  animation: agent-dance 2s ease-in-out infinite;
 }
 
 #agent {
@@ -254,16 +300,22 @@ html, body {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
   }
 }
 
-@keyframes breathe {
+@keyframes agent-dance {
   0%, 100% {
-    transform: scale(1);
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-5deg) scale(1.03, 0.97);
   }
   50% {
-    transform: scale(1.03);
+    transform: rotate(0deg) scale(0.97, 1.03);
+  }
+  75% {
+    transform: rotate(5deg) scale(1.03, 0.97);
   }
 }
 

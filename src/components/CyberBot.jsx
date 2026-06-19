@@ -153,10 +153,11 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
             initial={{ opacity: 0, scale: 0.85, x: 20, y: 15 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, x: 20, y: 15 }}
-            className="glassmorphism p-3.5 rounded-xl border border-google-red/45 text-left w-60 sm:w-64 shadow-2xl pointer-events-auto bg-cyber-bg-darker/95 relative mb-2"
+            className="glassmorphism p-3.5 rounded-xl border border-google-red/45 text-left w-60 sm:w-64 shadow-2xl pointer-events-auto bg-cyber-bg-darker/95 relative mb-4 lg:mb-0 lg:mr-4"
           >
+            {/* Responsive pointing arrow: points right on desktop, down on mobile */}
             <div
-              className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 border-r border-t border-google-red/45 transform rotate-45"
+              className="absolute lg:top-1/2 lg:-right-1.5 lg:-translate-y-1/2 lg:left-auto lg:bottom-auto lg:border-r lg:border-t lg:border-l-0 lg:border-b-0 left-1/2 -bottom-1.5 -translate-x-1/2 top-auto right-auto border-r border-b border-t-0 border-l-0 w-2.5 h-2.5 transform rotate-45"
               style={{ backgroundColor: 'var(--cyber-bg-darker)' }}
             />
 
@@ -187,7 +188,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                       onSimulateAttack?.();
                     }
                   }}
-                  className="w-full text-left py-1.5 px-2 rounded border border-google-green/40 bg-google-green/10 hover:bg-google-green/20 text-google-green font-mono text-[9px] font-bold flex items-center justify-between cursor-pointer transition-all duration-300"
+                  className="w-full text-left py-1.5 px-2 rounded border border-google-green/40 bg-google-green/10 hover:bg-google-green/20 hover:border-google-green/60 text-google-green font-mono text-[9px] font-bold flex items-center justify-between cursor-pointer transition-all duration-200 hover:pl-3 active:scale-98"
                 >
                   <span className="flex items-center gap-1.5">
                     <Sparkles size={9} className="animate-pulse" />
@@ -202,7 +203,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                   onToggleTerminal();
                   setShowBubble(false);
                 }}
-                className="w-full text-left py-1 px-2 rounded border border-google-blue/40 bg-google-blue/5 hover:bg-google-blue/15 text-google-blue hover:text-cyber-text-white transition-all text-[9px] font-bold flex items-center justify-between cursor-pointer"
+                className="w-full text-left py-1 px-2 rounded border border-google-blue/40 bg-google-blue/5 hover:bg-google-blue/15 text-google-blue hover:text-cyber-text-white transition-all duration-200 hover:pl-3 active:scale-98 text-[9px] font-bold flex items-center justify-between cursor-pointer"
               >
                 <span className="flex items-center gap-1">
                   <Terminal size={9} />
@@ -221,7 +222,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                     setQuoteIdx(rand);
                   }, 1400);
                 }}
-                className="w-full text-left py-1 px-2 rounded border border-cyber-bg-gray bg-cyber-bg-gray/20 hover:bg-cyber-bg-gray/40 text-cyber-text-muted hover:text-cyber-text-light transition-all text-[9px] flex items-center justify-between cursor-pointer"
+                className="w-full text-left py-1 px-2 rounded border border-cyber-bg-gray bg-cyber-bg-gray/20 hover:bg-cyber-bg-gray/40 text-cyber-text-muted hover:text-cyber-text-light transition-all duration-200 hover:pl-3 active:scale-98 text-[9px] flex items-center justify-between cursor-pointer"
               >
                 <span>NEXT STATUS BLOCK</span>
                 <Sparkles size={8} className="text-google-yellow" />
@@ -336,23 +337,33 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                 </g>
               </g>
 
-              {/* THINKING STATE: Rotating dashed eye rings (Google Red - Shifted left by 3px) */}
+              {/* THINKING STATE: Rotating dashed eye rings that follow eye-gaze tracking */}
               {isThinking && (
                 <>
                   <motion.circle
-                    cx="23.5" cy="38" r="5"
-                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
+                    cx={23.5 + activeEyeOffset.x}
+                    cy={38 + activeEyeOffset.y}
+                    r="5.5"
+                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1.5 1.5" fill="none"
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                    style={{ originX: '23.5px', originY: '38px' }}
+                    style={{ 
+                      originX: `${23.5 + activeEyeOffset.x}px`, 
+                      originY: `${38 + activeEyeOffset.y}px` 
+                    }}
                     opacity="0.85"
                   />
                   <motion.circle
-                    cx="36.0" cy="38" r="5"
-                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
+                    cx={36.0 + activeEyeOffset.x}
+                    cy={38 + activeEyeOffset.y}
+                    r="5.5"
+                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1.5 1.5" fill="none"
                     animate={{ rotate: -360 }}
                     transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                    style={{ originX: '36.0px', originY: '38px' }}
+                    style={{ 
+                      originX: `${36.0 + activeEyeOffset.x}px`, 
+                      originY: `${38 + activeEyeOffset.y}px` 
+                    }}
                     opacity="0.85"
                   />
                 </>
