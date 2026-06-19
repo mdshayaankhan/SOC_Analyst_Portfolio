@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Shield, Sparkles, ChevronRight } from 'lucide-react';
+import { Terminal, Shield, Sparkles, ChevronRight, Play, Award, Cpu, Folder, Lock } from 'lucide-react';
 
 const botQuotes = [
-  "Welcome! I am MD-Agent, your cybersecurity companion.",
-  "All systems operational. Network grid looks clear.",
-  "Tip: You can query log summaries in the shell interface.",
-  "Intrusion status: 0 active threats detected. System is safe.",
-  "Want to explore? Use the buttons in my status bubble!",
-  "Certificates decrypted! Scroll to Node 07 to view them.",
-  "Wazuh telemetry feed: Ingesting logs successfully."
+  "👋 Hello! I am MD-Agent, your security companion. Let's audit this workspace!",
+  "🛡️ Wazuh SIEM telemetry: Ingesting logs successfully. All systems operational.",
+  "💡 Tip: You can query terminal commands like 'help' or 'skills' in my portal shell.",
+  "🟢 Intrusion Status: 0 active threats detected. System integrity is stable.",
+  "🚀 Want to navigate? Click the quick action commands in my cognitive grid!",
+  "🔑 Certifications decrypted! Scroll down to inspect my verified vault."
 ];
 
 const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
@@ -52,7 +51,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Periodic looking around when idle (only when mouse hasn't moved yet)
+  // Periodic looking around when idle
   useEffect(() => {
     const lookInterval = setInterval(() => {
       if (hasMouseMoved || isThinking) return;
@@ -69,7 +68,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     return () => clearInterval(lookInterval);
   }, [hasMouseMoved, isThinking]);
 
-  // Track cursor offsets relative to the bot center (scaled to 64x64 coord space)
+  // Track cursor offsets relative to the bot center
   useEffect(() => {
     const handleMouseMove = (e) => {
       setHasMouseMoved(true);
@@ -82,9 +81,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       const dy = e.clientY - botCenterY;
       const dist = Math.hypot(dx, dy);
 
-      const maxDisplacement = 2.5; // Larger displacement for visible tracking
+      const maxDisplacement = 2.0; // Subtle eye tracking displacement
       if (dist > 0) {
-        const factor = Math.min(maxDisplacement, dist * 0.01);
+        const factor = Math.min(maxDisplacement, dist * 0.008);
         setMouseOffset({
           x: (dx / dist) * factor,
           y: (dy / dist) * factor
@@ -129,9 +128,14 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     }
   };
 
-  const activeEyeOffset = hasMouseMoved
-    ? mouseOffset
-    : eyeLookOffset;
+  const handleAction = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const activeEyeOffset = hasMouseMoved ? mouseOffset : eyeLookOffset;
 
   return (
     <div className="fixed bottom-4 right-4 z-40 font-mono flex items-end gap-3.5 pointer-events-none select-none max-w-[calc(100vw-2rem)] lg:bottom-8 lg:right-8 lg:flex-row flex-col-reverse justify-end items-center lg:items-end">
@@ -143,19 +147,19 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             initial={{ opacity: 0, scale: 0.85, x: 20, y: 15 }}
             animate={{ opacity: 1, scale: 1, x: 0, y: 0 }}
             exit={{ opacity: 0, scale: 0.85, x: 20, y: 15 }}
-            className="glassmorphism p-3.5 rounded-xl border border-google-red/45 text-left w-60 sm:w-64 shadow-2xl pointer-events-auto bg-cyber-bg-darker/95 relative mb-2"
+            className="glassmorphism p-3.5 rounded-xl border border-google-blue/45 text-left w-60 sm:w-64 shadow-2xl pointer-events-auto bg-cyber-bg-darker/95 relative mb-2"
           >
             <div
-              className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 border-r border-t border-google-red/45 transform rotate-45"
+              className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 border-r border-t border-google-blue/45 transform rotate-45"
               style={{ backgroundColor: 'var(--cyber-bg-darker)' }}
             />
 
-            <div className="flex items-center justify-between border-b border-cyber-bg-gray pb-1.5 mb-2 text-[9px] text-google-red font-bold">
+            <div className="flex items-center justify-between border-b border-cyber-bg-gray pb-1.5 mb-2 text-[9px] text-google-blue font-bold">
               <div className="flex items-center gap-1.5">
-                <Shield size={11} className="animate-pulse text-google-red" />
+                <Shield size={11} className="animate-pulse text-google-blue" />
                 <span>AGENT COGNITIVE GRID</span>
               </div>
-              <span className="w-1.5 h-1.5 rounded-full bg-google-red animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-full bg-google-blue animate-ping" />
             </div>
 
             <p className="text-[10px] text-cyber-text-light font-sans leading-relaxed font-light mb-3 min-h-[30px]">
@@ -163,20 +167,73 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             </p>
 
             <div className="flex flex-col gap-1.5 pt-2 border-t border-cyber-bg-gray/40">
+              {/* Toggle secure shell */}
               <button
                 onClick={() => {
                   onToggleTerminal();
                   setShowBubble(false);
                 }}
-                className="w-full text-left py-1 px-2 rounded border border-google-blue/40 bg-google-blue/5 hover:bg-google-blue/15 text-google-blue hover:text-cyber-text-white transition-all text-[9px] font-bold flex items-center justify-between cursor-pointer"
+                className="w-full text-left py-1.5 px-2 rounded border border-google-blue/40 bg-google-blue/5 hover:bg-google-blue/15 text-google-blue hover:text-white transition-all text-[9px] font-bold flex items-center justify-between cursor-pointer"
               >
                 <span className="flex items-center gap-1">
-                  <Terminal size={9} />
+                  <Terminal size={10} />
                   <span>{isTerminalOpen ? 'CLOSE SECURE SHELL' : 'LAUNCH SECURE SHELL'}</span>
                 </span>
                 <ChevronRight size={10} />
               </button>
 
+              {/* Action grid */}
+              <div className="grid grid-cols-2 gap-1.5 mt-1">
+                <button
+                  onClick={() => {
+                    handleAction('certs');
+                    setIsThinking(true);
+                    setTimeout(() => setIsThinking(false), 800);
+                  }}
+                  className="py-1 px-1.5 rounded border border-google-yellow/40 bg-google-yellow/5 hover:bg-google-yellow/15 text-google-yellow hover:text-white transition-all text-[8px] font-bold text-center cursor-pointer"
+                >
+                  🔓 DECRYPT VAULT
+                </button>
+                <button
+                  onClick={() => {
+                    handleAction('scanner');
+                    setIsThinking(true);
+                    setTimeout(() => setIsThinking(false), 800);
+                  }}
+                  className="py-1 px-1.5 rounded border border-google-green/40 bg-google-green/5 hover:bg-google-green/15 text-google-green hover:text-white transition-all text-[8px] font-bold text-center cursor-pointer"
+                >
+                  🔍 RUN SCANNER
+                </button>
+                <button
+                  onClick={() => {
+                    // Try to click simulation button on screen
+                    const buttons = Array.from(document.querySelectorAll('button'));
+                    const simBtn = buttons.find(b => b.textContent.includes('SIMULATE ATTACK'));
+                    if (simBtn) {
+                      simBtn.click();
+                    } else {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                    setIsThinking(true);
+                    setTimeout(() => setIsThinking(false), 800);
+                  }}
+                  className="py-1 px-1.5 rounded border border-google-red/40 bg-google-red/5 hover:bg-google-red/15 text-google-red hover:text-white transition-all text-[8px] font-bold text-center cursor-pointer"
+                >
+                  💥 SIMULATE ATTACK
+                </button>
+                <button
+                  onClick={() => {
+                    handleAction('projects');
+                    setIsThinking(true);
+                    setTimeout(() => setIsThinking(false), 800);
+                  }}
+                  className="py-1 px-1.5 rounded border border-cyber-bg-gray bg-cyber-bg-gray/20 hover:bg-cyber-bg-gray/40 text-cyber-text-muted hover:text-cyber-text-light transition-all text-[8px] font-bold text-center cursor-pointer"
+                >
+                  📁 PROJECT VAULT
+                </button>
+              </div>
+
+              {/* Next status indicator */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -185,11 +242,11 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
                     setIsThinking(false);
                     const rand = Math.floor(Math.random() * botQuotes.length);
                     setQuoteIdx(rand);
-                  }, 1400);
+                  }, 1000);
                 }}
-                className="w-full text-left py-1 px-2 rounded border border-cyber-bg-gray bg-cyber-bg-gray/20 hover:bg-cyber-bg-gray/40 text-cyber-text-muted hover:text-cyber-text-light transition-all text-[9px] flex items-center justify-between cursor-pointer"
+                className="w-full mt-1 text-center py-1 px-2 rounded border border-cyber-bg-gray/40 bg-cyber-bg-gray/10 hover:bg-cyber-bg-gray/25 text-cyber-text-muted hover:text-cyber-text-light transition-all text-[8px] flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>NEXT STATUS BLOCK</span>
+                <span>NEXT LOG SUMMARY</span>
                 <Sparkles size={8} className="text-google-yellow" />
               </button>
             </div>
@@ -197,13 +254,13 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
         )}
       </AnimatePresence>
 
-      {/* 2. Unified Mascot Body Container (Nested float/breathe wrappers, styled with CSS animations) */}
+      {/* 2. Unified Mascot Body Container */}
       <div className="agent-float-wrapper pointer-events-auto">
         <div className="agent-breathe-wrapper">
           <div
             ref={botRef}
             id="agent"
-            className={`cursor-pointer filter drop-shadow-[0_0_15px_rgba(234,67,53,0.35)] active:scale-95 transition-all duration-300 ${isThinking ? 'talking' : ''}`}
+            className={`w-16 h-16 cursor-pointer filter drop-shadow-[0_0_15px_rgba(56,189,248,0.35)] active:scale-95 transition-all duration-300 ${isThinking ? 'talking' : ''}`}
             title="Agent AI Assistant - Click to query"
             onClick={handleMascotClick}
             onMouseEnter={() => setIsHovered(true)}
@@ -211,126 +268,110 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
           >
             <svg viewBox="0 0 64 64" className="w-full h-full overflow-visible">
               <defs>
-                {/* Simple White Eye Glow */}
-                <filter id="simpleEyeGlow" x="-30%" y="-30%" width="160%" height="160%">
-                  <feGaussianBlur stdDeviation="0.5" result="blur" />
+                {/* Visor Glow */}
+                <filter id="visorGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="1.5" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
-
-                {/* Ambient Shadow */}
-                <filter id="shadowGlow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="2" result="blur" />
+                {/* Cyan LED Glow */}
+                <filter id="cyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="1" result="blur" />
                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
                 </filter>
+                {/* Visor Gradient */}
+                <linearGradient id="visorGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#1e293b" />
+                  <stop offset="100%" stopColor="#0f172a" />
+                </linearGradient>
+                {/* Body Gradient */}
+                <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#38bdf8" />
+                  <stop offset="50%" stopColor="#0284c7" />
+                  <stop offset="100%" stopColor="#0369a1" />
+                </linearGradient>
               </defs>
 
-              {/* Soft Shadow Underneath (moved lower to cy="60" for more float gap) */}
+              {/* Soft Shadow Underneath */}
               <ellipse
                 cx="32"
-                cy="60"
-                rx="14"
-                ry="1.5"
-                fill="rgba(0, 0, 0, 0.4)"
-                filter="url(#shadowGlow)"
+                cy="58"
+                rx="16"
+                ry="2"
+                fill="rgba(0, 0, 0, 0.5)"
+                filter="url(#visorGlow)"
               />
 
-              {/* Mascot Head Logo Group */}
+              {/* Cyber Antennae */}
+              <line x1="18" y1="22" x2="10" y2="14" stroke="#0284c7" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="10" cy="14" r="2.5" fill="#38bdf8" className="animate-pulse" />
+
+              <line x1="46" y1="22" x2="54" y2="14" stroke="#0284c7" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="54" cy="14" r="2.5" fill="#38bdf8" className="animate-pulse" />
+
+              {/* Main Head Dome (Sleek Glassy Helmet) */}
+              <circle cx="32" cy="32" r="20" fill="url(#bodyGrad)" stroke="#0f172a" strokeWidth="2" />
+              
+              {/* Shiny Helmet Highlight */}
+              <path d="M 18,20 Q 32,14 46,20 Q 32,24 18,20 Z" fill="rgba(255, 255, 255, 0.25)" />
+
+              {/* Cyber Visor Shield (Matte Black/Deep Blue, shifted left by 2.5px to turn face left) */}
+              <rect x="13.5" y="24" width="32" height="15" rx="7.5" fill="url(#visorGrad)" stroke="#38bdf8" strokeWidth="1.5" filter="url(#visorGlow)" />
+
+              {/* Visor Reflection Streak (shifted left by 2.5px) */}
+              <path d="M 15.5,26 L 43.5,26 L 39.5,29 L 19.5,29 Z" fill="rgba(255, 255, 255, 0.12)" />
+
+              {/* Cyber Mouth / LED Status Bar (shifted left by 2.5px) */}
+              <rect x="23.5" y="44" width="12" height="2" rx="1" fill="#38bdf8" opacity="0.6" className="animate-pulse" />
+
+              {/* Neon LED Eyes (shifted left by 2.5px to face left, plus interactive tracking) */}
               <g>
-                {/* Scaled-down Outer Body Group (Outline + Fill) */}
-                <g transform="translate(32, 32) scale(0.90) translate(-32, -32)">
-                  {/* Outer Silhouette (Outline) */}
-                  <path
-                    d="M 60 10 L 58 12 L 54 8 L 50 9 L 47 15 L 44 14 L 37 10 L 31 10 L 27 12 L 17 22 L 12 29 L 7 39 L 6 42 L 6 44 L 8 48 L 10 50 L 12 51 L 22 53 L 37 53 L 42 52 L 48 50 L 50 49 L 52 47 L 53 45 L 53 41 L 52 38 L 50 35 L 50 33 L 48 31 L 46 28 L 46 26 L 47 24 L 52 19 L 53 16 L 58 16 L 60 14 Z"
-                    fill="#070909"
-                  />
-
-                  {/* Google Red Body */}
-                  <path
-                    d="M 58 13 L 56 13 L 52 10 L 51 13 L 47 17 L 45 17 L 41 15 L 39 13 L 37 12 L 31 12 L 26 15 L 18 24 L 13 31 L 8 41 L 8 44 L 9 46 L 11 48 L 15 50 L 18 51 L 24 52 L 35 52 L 41 51 L 44 50 L 48 48 L 50 46 L 51 44 L 51 41 L 50 38 L 49 36 L 47 34 L 44 27 L 42 25 L 40 20 L 39 16 L 43 20 L 45 21 L 48 21 L 50 19 L 51 16 L 51 14 L 53 12 L 55 14 Z"
-                    fill="#EA4335"
-                  />
-                </g>
-
-                {/* Matte Black Face Opening (Clean Oval shifted to left by 3px) */}
-                <ellipse
-                  cx="29.5"
-                  cy="38"
-                  rx="15.5"
-                  ry="12"
-                  fill="#070909"
-                />
-
-                {/* Eyes (Shifted left by 3px) */}
-                <g>
-                  {isBlinking ? (
-                    <>
-                      <ellipse
-                        cx={23.5 + activeEyeOffset.x}
-                        cy={38 + activeEyeOffset.y}
-                        rx="2.5"
-                        ry="0.5"
-                        fill="#FFFFFF"
-                      />
-                      <ellipse
-                        cx={36.0 + activeEyeOffset.x}
-                        cy={38 + activeEyeOffset.y}
-                        rx="2.5"
-                        ry="0.5"
-                        fill="#FFFFFF"
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <ellipse
-                        cx={23.5 + activeEyeOffset.x}
-                        cy={38 + activeEyeOffset.y}
-                        rx="2.5"
-                        ry="4"
-                        fill="#FFFFFF"
-                        filter="url(#simpleEyeGlow)"
-                      />
-                      <ellipse
-                        cx={36.0 + activeEyeOffset.x}
-                        cy={38 + activeEyeOffset.y}
-                        rx="2.5"
-                        ry="4"
-                        fill="#FFFFFF"
-                        filter="url(#simpleEyeGlow)"
-                      />
-                    </>
-                  )}
-                </g>
+                {isBlinking ? (
+                  <>
+                    <line x1={18.5 + activeEyeOffset.x} y1="31.5" x2={24.5 + activeEyeOffset.x} y2="31.5" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" />
+                    <line x1={34.5 + activeEyeOffset.x} y1="31.5" x2={40.5 + activeEyeOffset.x} y2="31.5" stroke="#38bdf8" strokeWidth="1.5" strokeLinecap="round" />
+                  </>
+                ) : isHovered ? (
+                  <>
+                    <path d="M 18.5,33 Q 21.5,29 24.5,33" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" fill="none" filter="url(#cyanGlow)" />
+                    <path d="M 34.5,33 Q 37.5,29 40.5,33" stroke="#38bdf8" strokeWidth="2" strokeLinecap="round" fill="none" filter="url(#cyanGlow)" />
+                  </>
+                ) : (
+                  <>
+                    <circle cx={21.5 + activeEyeOffset.x} cy={31.5 + activeEyeOffset.y} r="2.5" fill="#38bdf8" filter="url(#cyanGlow)" />
+                    <circle cx={37.5 + activeEyeOffset.x} cy={31.5 + activeEyeOffset.y} r="2.5" fill="#38bdf8" filter="url(#cyanGlow)" />
+                  </>
+                )}
               </g>
 
-              {/* THINKING STATE: Rotating dashed eye rings (Google Red - Shifted left by 3px) */}
+              {/* Thinking State: Rotating dashed eye rings (shifted left by 2.5px) */}
               {isThinking && (
                 <>
                   <motion.circle
-                    cx="23.5" cy="38" r="5"
-                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
+                    cx="21.5" cy="31.5" r="4.5"
+                    stroke="#38bdf8" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                    style={{ originX: '23.5px', originY: '38px' }}
+                    style={{ originX: '21.5px', originY: '31.5px' }}
                     opacity="0.85"
                   />
                   <motion.circle
-                    cx="36.0" cy="38" r="5"
-                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
+                    cx="37.5" cy="31.5" r="4.5"
+                    stroke="#38bdf8" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
                     animate={{ rotate: -360 }}
                     transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                    style={{ originX: '36.0px', originY: '38px' }}
+                    style={{ originX: '37.5px', originY: '31.5px' }}
                     opacity="0.85"
                   />
                 </>
               )}
 
-              {/* LISTENING STATE: Floating packet particles (Google Red) */}
+              {/* Listening State: Floating packet particles (Cyan) */}
               {isListening && (
                 <g className="pointer-events-none">
-                  <motion.circle cx="10" cy="38" r="0.8" fill="#EA4335" animate={{ y: [-5, -20], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.4, delay: 0 }} />
-                  <motion.circle cx="54" cy="40" r="1.0" fill="#EA4335" animate={{ y: [-3, -25], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.8, delay: 0.6 }} />
-                  <motion.circle cx="16" cy="16" r="0.6" fill="#EA4335" animate={{ y: [-2, -15], opacity: [0, 0.8, 0] }} transition={{ repeat: Infinity, duration: 2.0, delay: 1.2 }} />
-                  <motion.circle cx="48" cy="20" r="0.9" fill="#EA4335" animate={{ y: [-3, -18], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.6, delay: 1.8 }} />
+                  <motion.circle cx="10" cy="38" r="0.8" fill="#38bdf8" animate={{ y: [-5, -20], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.4, delay: 0 }} />
+                  <motion.circle cx="54" cy="40" r="1.0" fill="#38bdf8" animate={{ y: [-3, -25], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.8, delay: 0.6 }} />
+                  <motion.circle cx="16" cy="16" r="0.6" fill="#38bdf8" animate={{ y: [-2, -15], opacity: [0, 0.8, 0] }} transition={{ repeat: Infinity, duration: 2.0, delay: 1.2 }} />
+                  <motion.circle cx="48" cy="20" r="0.9" fill="#38bdf8" animate={{ y: [-3, -18], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.6, delay: 1.8 }} />
                 </g>
               )}
             </svg>
