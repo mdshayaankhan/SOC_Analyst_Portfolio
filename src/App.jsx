@@ -114,7 +114,7 @@ const App = () => {
       <InteractiveTerminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
 
       {/* 6. Floating Interactive Green Agent Helper Bot */}
-      <CyberBot isTerminalOpen={isTerminalOpen} onToggleTerminal={() => setIsTerminalOpen(prev => !prev)} />
+      <CyberBot isTerminalOpen={isTerminalOpen} onToggleTerminal={() => setIsTerminalOpen(prev => !prev)} onSimulateAttack={() => setShowSimulator(true)} />
 
       {/* 7. Fullscreen Incident Response Attack Simulator */}
       <AnimatePresence>
