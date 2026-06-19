@@ -435,7 +435,7 @@ const App = () => {
               </p>
               <div className="mt-4 pt-3 border-t border-cyber-bg-gray/40 flex items-center justify-between text-[9px] text-cyber-text-muted">
                 <span>ISSUED: UNIVERSITY STARTUP INITIATIVE</span>
-                <span>DATE: MARCH 2025</span>
+                <span>DATE: NOV 2023</span>
               </div>
             </div>
           </div>

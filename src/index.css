@@ -193,6 +193,15 @@ html, body {
   animation: pulse-slow 5s ease-in-out infinite;
 }
 
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.28; }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
 /* Clip paths and futuristic borders */
 .cyber-corner-border {
   clip-path: polygon(

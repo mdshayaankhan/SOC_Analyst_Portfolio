@@ -22,77 +22,128 @@ const certs = [
   }
 ];
 
+// Deterministic helper to scramble text for the encrypted state
+const scramble = (text) => {
+  const chars = '0123456789ABCDEF!@#$';
+  return text
+    .split('')
+    .map((char, i) => {
+      if (char === ' ' || char === ',' || char === '.' || char === '(' || char === ')') return char;
+      const index = (char.charCodeAt(0) + i) % chars.length;
+      return chars[index];
+    })
+    .join('');
+};
+
 const CertCard = ({ cert }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [displayText, setDisplayText] = useState(cert.scrambledTitle);
+  const [displayTitle, setDisplayTitle] = useState(cert.scrambledTitle);
+  const [displayDetails, setDisplayDetails] = useState(scramble(cert.details));
+  const [displayDate, setDisplayDate] = useState(scramble(cert.date));
   const [isDecrypted, setIsDecrypted] = useState(false);
+
+  // Sync state if cert changes
+  useEffect(() => {
+    if (!isHovered) {
+      setDisplayTitle(cert.scrambledTitle);
+      setDisplayDetails(scramble(cert.details));
+      setDisplayDate(scramble(cert.date));
+      setIsDecrypted(false);
+    }
+  }, [cert, isHovered]);
 
   // Scramble text animation on hover
   useEffect(() => {
-    if (!isHovered) {
-      setDisplayText(cert.scrambledTitle);
-      setIsDecrypted(false);
-      return;
-    }
+    if (!isHovered) return;
 
-    let iterations = 0;
-    const chars = 'ABCDEF0123456789X$/%#@!^&*()_+';
+    let progress = 0;
     const interval = setInterval(() => {
-      setDisplayText(prev => {
+      progress += 4;
+      
+      // Update Title
+      setDisplayTitle(() => {
+        const revealCount = Math.floor((cert.realTitle.length * progress) / 100);
         return cert.realTitle
           .split('')
           .map((char, index) => {
             if (char === ' ') return ' ';
-            if (index < iterations) return cert.realTitle[index];
+            if (index < revealCount) return cert.realTitle[index];
+            const chars = 'ABCDEF0123456789';
             return chars[Math.floor(Math.random() * chars.length)];
           })
           .join('');
       });
 
-      iterations += 2;
-      if (iterations >= cert.realTitle.length) {
+      // Update Details
+      setDisplayDetails(() => {
+        const revealCount = Math.floor((cert.details.length * progress) / 100);
+        return cert.details
+          .split('')
+          .map((char, index) => {
+            if (char === ' ' || char === ',' || char === '.' || char === '(' || char === ')') return char;
+            if (index < revealCount) return cert.details[index];
+            const chars = '0123456789!@#$';
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join('');
+      });
+
+      // Update Date
+      setDisplayDate(() => {
+        const revealCount = Math.floor((cert.date.length * progress) / 100);
+        return cert.date
+          .split('')
+          .map((char, index) => {
+            if (char === ' ') return ' ';
+            if (index < revealCount) return cert.date[index];
+            const chars = '0123456789';
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join('');
+      });
+
+      if (progress >= 100) {
         clearInterval(interval);
-        setDisplayText(cert.realTitle);
+        setDisplayTitle(cert.realTitle);
+        setDisplayDetails(cert.details);
+        setDisplayDate(cert.date);
         setIsDecrypted(true);
       }
-    }, 40);
+    }, 25);
 
     return () => clearInterval(interval);
-  }, [isHovered, cert.realTitle, cert.scrambledTitle]);
+  }, [isHovered, cert]);
 
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`relative p-6 rounded-xl border transition-all duration-500 overflow-hidden min-h-[200px] flex flex-col justify-between cursor-pointer ${
-        isDecrypted 
-          ? 'glassmorphism-blue border-google-blue/40 shadow-lg shadow-google-blue/10' 
-          : 'bg-cyber-bg-darker/60 border-cyber-bg-gray/50 hover:border-cyber-bg-gray'
-      }`}
+      className={`relative p-6 rounded-xl border transition-all duration-500 overflow-hidden min-h-[120px] flex flex-col justify-between cursor-pointer bg-cyber-bg-darker border-cyber-bg-gray/80 ${isDecrypted
+          ? 'glassmorphism-blue border-google-blue/50'
+          : 'hover:border-google-yellow/45'
+        }`}
     >
       {/* Holographic scanning diagonal gradient */}
       {isDecrypted && (
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-tr from-transparent via-white to-transparent" 
+        <div
+          className="absolute inset-0 pointer-events-none opacity-20 bg-gradient-to-tr from-transparent via-white to-transparent"
           style={{
             backgroundSize: '200% 200%',
-            animation: 'pulse-slow 4s ease-in-out infinite'
+            animation: 'glow-pulse 4s ease-in-out infinite'
           }}
         />
       )}
 
       {/* Lock/Unlock status overlay */}
       <div className="flex justify-between items-start mb-3">
-        <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${
-          isDecrypted ? 'bg-google-blue/15 border-google-blue/30 text-google-blue' : 'bg-cyber-bg-gray/30 border-cyber-bg-gray text-cyber-text-muted'
-        }`}>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${isDecrypted ? 'bg-google-blue/15 border-google-blue/30 text-google-blue' : 'bg-cyber-bg-gray/30 border-cyber-bg-gray/80 text-cyber-text-muted-bright'
+          }`}>
           {isDecrypted ? <Unlock size={14} className="animate-pulse" /> : <Lock size={14} />}
         </div>
-        <span className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border ${
-          isDecrypted 
-            ? 'bg-google-green/10 border-google-green/30 text-google-green' 
+        <span className={`font-mono text-[9px] font-bold px-2 py-0.5 rounded border ${isDecrypted
+            ? 'bg-google-green/10 border-google-green/30 text-google-green'
             : 'bg-google-yellow/10 border-google-yellow/30 text-google-yellow'
-        }`}>
+          }`}>
           {isDecrypted ? 'SECURE DECRYPTED' : 'ENCRYPTED VAULT'}
         </span>
       </div>
@@ -100,37 +151,48 @@ const CertCard = ({ cert }) => {
       {/* Scrambling Title */}
       <div className="mb-4">
         <h4 className="font-mono text-sm sm:text-base font-bold text-cyber-text-white leading-snug tracking-wide">
-          {displayText}
+          {displayTitle}
         </h4>
-        <span className="font-mono text-[10px] text-cyber-text-muted mt-1 block">
+        <span className="font-mono text-[10px] text-cyber-text-muted-bright mt-1 block">
           ISSUER: {cert.issuer}
         </span>
       </div>
 
-      {/* Details block revealed on decrypt */}
-      {isDecrypted ? (
-        <div className="flex-1 flex flex-col justify-between mt-2 pt-3 border-t border-cyber-bg-gray font-sans">
+      {/* Details block always present in layout but expands grid height on hover */}
+      <div 
+        className={`grid transition-all duration-500 ${
+          isHovered ? 'grid-rows-[1fr] opacity-100 mt-2 pt-3 border-t border-cyber-bg-gray/50' : 'grid-rows-[0fr] opacity-0 pointer-events-none'
+        }`}
+        style={{ display: 'grid' }}
+      >
+        <div className="overflow-hidden flex flex-col justify-between font-sans">
           <p className="text-[11px] text-cyber-text-light leading-relaxed mb-4">
-            {cert.details}
+            {displayDetails}
           </p>
-          <div className="flex items-center justify-between font-mono text-[9px] text-cyber-text-muted mt-auto">
+          <div className="flex items-center justify-between font-mono text-[9px] text-cyber-text-muted-bright mt-auto pt-2 border-t border-cyber-bg-gray/20">
             <span className="flex items-center gap-1">
               <Calendar size={10} className="text-google-blue" />
-              DATE: {cert.date}
+              DATE: {displayDate}
             </span>
-            <span className="flex items-center gap-1 hover:text-cyber-text-white cursor-pointer transition-colors">
-              VERIFY VAULT
-              <ExternalLink size={10} />
-            </span>
+            {isDecrypted ? (
+              <a 
+                href={cert.verifyLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex items-center gap-1 text-google-blue hover:text-white cursor-pointer transition-colors"
+              >
+                VERIFY VAULT
+                <ExternalLink size={10} />
+              </a>
+            ) : (
+              <span className="flex items-center gap-1 text-google-yellow/80 font-bold tracking-wider animate-pulse">
+                [DECRYPTING VAULT]
+                <Lock size={8} />
+              </span>
+            )}
           </div>
         </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center border-t border-cyber-bg-gray/40 pt-4">
-          <span className="font-mono text-[10px] text-google-yellow/90 font-bold tracking-widest uppercase animate-pulse">
-            [HOVER TO INITIATE DECRYPTION]
-          </span>
-        </div>
-      )}
+      </div>
     </div>
   );
 };
