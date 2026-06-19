@@ -7,16 +7,16 @@ const certs = [
     scrambledTitle: 'G00GL3 CYB3R53CUR1TY PR0F35510N4L',
     realTitle: 'Google Cybersecurity Professional Certificate',
     issuer: 'Google',
-    date: 'Dec 2024',
+    date: 'Jun 2026',
     verifyLink: '#',
     details: 'Comprehensive security analytics including packet capture inspection, Linux administration, Python network automation, SIEM queries creation, and threat profiling.'
   },
   {
     id: 'ethical-hacking',
-    scrambledTitle: '3TH1C4L H4CK1NG 5P3C14L15T TR41N1NG',
-    realTitle: 'Ethical Hacking Specialist Training',
-    issuer: 'EC-Council Partner Training',
-    date: 'May 2025',
+    scrambledTitle: 'N5DC 5K1LL 1ND14 C3RT1F1C4T3',
+    realTitle: 'NSDC Skill India Certificate',
+    issuer: 'NSDC (National Skill Development Corporation)',
+    date: 'Dec 2024',
     verifyLink: '#',
     details: 'Offensive cyber tactics covering active reconnaissance (Nmap, Nessus), vulnerability analysis, wireless exploits, privilege escalation vectors, and firewall evasion.'
   }
@@ -126,7 +126,7 @@ const CertCard = ({ cert }) => {
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center border-t border-cyber-bg-gray/40 pt-4">
-          <span className="font-mono text-[10px] text-cyber-text-muted tracking-widest uppercase animate-pulse">
+          <span className="font-mono text-[10px] text-google-yellow/90 font-bold tracking-widest uppercase animate-pulse">
             [HOVER TO INITIATE DECRYPTION]
           </span>
         </div>

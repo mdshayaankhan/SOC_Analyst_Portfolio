@@ -71,7 +71,7 @@ const InteractiveTerminal = ({ isOpen, onClose }) => {
         reply = [
           { text: 'Credentials Vault:', type: 'success' },
           { text: '  * Google Cybersecurity Professional Certificate', type: 'info' },
-          { text: '  * Ethical Hacking Specialist Training', type: 'info' },
+          { text: '  * NSDC Skill India Certificate', type: 'info' },
           { text: 'Awards:', type: 'success' },
           { text: '  * Best Startup Concept Award (GDSC) for Efficient Logistics System', type: 'info' },
           { text: 'Action: Scroll down to the Certifications Vault section to decrypt credentials.', type: 'info' },

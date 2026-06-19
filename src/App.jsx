@@ -113,7 +113,7 @@ const App = () => {
       {/* 5. Floating Command Line Terminal console */}
       <InteractiveTerminal isOpen={isTerminalOpen} onClose={() => setIsTerminalOpen(false)} />
 
-      {/* 6. Floating Interactive Red Mascot Helper Bot */}
+      {/* 6. Floating Interactive Green Agent Helper Bot */}
       <CyberBot isTerminalOpen={isTerminalOpen} onToggleTerminal={() => setIsTerminalOpen(prev => !prev)} />
 
       {/* 7. Fullscreen Incident Response Attack Simulator */}
@@ -131,10 +131,10 @@ const App = () => {
       </AnimatePresence>
 
       {/* Main Layout Container (With padding-left to leave space for left HUD map on zoom) */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-8 lg:pl-48 flex flex-col gap-28 pb-20">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-4 md:px-8 lg:pl-36 xl:pl-20 2xl:pl-0 flex flex-col gap-28 pb-20">
         
         {/* ================= HERO SECTION ================= */}
-        <section className="min-h-screen flex flex-col justify-center items-center text-center relative pt-20">
+        <section className="min-h-screen flex flex-col justify-center items-center text-center relative pt-20 lg:-translate-x-16">
           
           {/* Subtle grid pattern background highlight */}
           <div className="absolute inset-0 cyber-grid opacity-30 pointer-events-none" />
@@ -150,7 +150,7 @@ const App = () => {
             ★ SYSTEM CORE PROTOCOL INITIALIZED ★
           </span>
 
-          <h1 className="font-orbitron font-black text-4xl sm:text-6xl md:text-7xl text-cyber-text-white tracking-tight uppercase leading-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+          <h1 className="font-orbitron font-black text-3xl sm:text-5xl md:text-6xl lg:text-5xl xl:text-6xl lg:whitespace-nowrap text-cyber-text-white tracking-tight uppercase leading-none drop-shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
             MOHAMMAD SHAYAAN KHAN
           </h1>
 
@@ -179,37 +179,42 @@ const App = () => {
           </div>
 
           {/* Action CTAs */}
-          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-4 w-full max-w-lg z-20">
-            <button
-              onClick={handleScrollToJourney}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg border border-google-blue bg-google-blue/10 hover:bg-google-blue/20 text-cyber-text-white font-mono text-xs font-bold tracking-wider cursor-pointer transition-all duration-300 hover:scale-105"
-            >
-              LAUNCH CYBER JOURNEY
-            </button>
-            
-            <button
-              onClick={() => {
-                const el = document.getElementById('projects');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg border border-cyber-bg-gray/60 bg-cyber-bg-darkest/45 hover:border-cyber-bg-gray text-cyber-text-light font-mono text-xs font-bold tracking-wider cursor-pointer transition-all duration-300 hover:scale-105"
-            >
-              VIEW PROJECTS
-            </button>
+          <div className="flex flex-col items-center justify-center gap-4 w-full max-w-lg mx-auto z-20">
+            {/* Top row buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+              <button
+                onClick={handleScrollToJourney}
+                className="w-full sm:w-auto px-6 py-3 rounded-lg border border-google-blue bg-google-blue/10 hover:bg-google-blue/20 text-cyber-text-white font-mono text-xs font-bold tracking-wider cursor-pointer transition-all duration-300 hover:scale-105"
+              >
+                LAUNCH CYBER JOURNEY
+              </button>
+              
+              <button
+                onClick={() => {
+                  const el = document.getElementById('projects');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto px-6 py-3 rounded-lg border border-cyber-bg-gray/60 bg-cyber-bg-darkest/45 hover:border-cyber-bg-gray text-cyber-text-light font-mono text-xs font-bold tracking-wider cursor-pointer transition-all duration-300 hover:scale-105"
+              >
+                VIEW PROJECTS
+              </button>
+            </div>
 
-            {/* Resume decryption button */}
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                const el = document.getElementById('certs');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="w-full sm:w-auto px-6 py-3 rounded-lg border border-cyber-bg-gray/60 bg-cyber-bg-darkest/45 hover:border-cyber-bg-gray text-cyber-text-light font-mono text-xs font-bold tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 hover:scale-105"
-            >
-              <Download size={13} />
-              <span>DECRYPT CREDENTIALS</span>
-            </a>
+            {/* Bottom row button */}
+            <div className="flex items-center justify-center w-full">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById('certs');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto px-6 py-3 rounded-lg border border-cyber-bg-gray/60 bg-cyber-bg-darkest/45 hover:border-cyber-bg-gray text-cyber-text-light font-mono text-xs font-bold tracking-wider flex items-center justify-center gap-2 cursor-pointer transition-all duration-300 hover:scale-105"
+              >
+                <Download size={13} />
+                <span>DECRYPT CREDENTIALS</span>
+              </a>
+            </div>
           </div>
 
           {/* SPECIAL ACTION BUTTON: Attack Simulation Mode */}
@@ -250,7 +255,7 @@ const App = () => {
                 Welcome to the security operations log of <strong className="text-cyber-text-white">Mohammad Shayaan Khan</strong>. 
                 As a SOC analyst, threat engineer, and blue-teamer, I specialize in analyzing log payloads, configuring telemetry pipelines, and tracking anomalous security telemetry to defend enterprise environments.
               </p>
-              <p className="text-xs sm:text-sm text-cyber-text-muted leading-relaxed font-sans">
+              <p className="text-xs sm:text-sm text-cyber-text-light leading-relaxed font-sans">
                 My professional philosophy is centered around threat hunting—believing that system perimeter defense is only as strong as your internal audit logs. I design, test, and maintain Wazuh SIEM ecosystems, map adversary actions against the MITRE ATT&CK matrix, and program automated active-response scripts.
               </p>
             </div>
@@ -303,7 +308,7 @@ const App = () => {
               <div>
                 <span className="font-mono text-[10px] text-google-green font-bold">2023 - 2024</span>
                 <h4 className="text-cyber-text-white font-bold text-base mt-0.5">Foundational Log Auditing</h4>
-                <p className="text-xs text-cyber-text-muted leading-relaxed mt-2 font-light">
+                <p className="text-xs text-cyber-text-light leading-relaxed mt-2 font-light">
                   Began by exploring Operating System security concepts. Configured audit logs inside Linux servers, researched bash logs scripting, analyzed TCP handshakes, and audited user sessions to map basic anomalies.
                 </p>
               </div>
@@ -319,7 +324,7 @@ const App = () => {
               <div>
                 <span className="font-mono text-[10px] text-google-green font-bold">2024 - PRESENT</span>
                 <h4 className="text-cyber-text-white font-bold text-base mt-0.5">Advanced SIEM & Detection Tuning</h4>
-                <p className="text-xs text-cyber-text-muted leading-relaxed mt-2 font-light">
+                <p className="text-xs text-cyber-text-light leading-relaxed mt-2 font-light">
                   Pivoted to enterprise-grade tools. Structured Wazuh SIEM ecosystems, implemented custom XML decoders and OSSEC alert rules, mapped Sysmon telemetry feeds to MITRE ATT&CK stages, and built testing labs.
                 </p>
               </div>
@@ -581,8 +586,8 @@ const App = () => {
 
       </div>
 
-      {/* Footer Info HUD (Aligned with lg:pl-48 padding shift) */}
-      <footer className="w-full bg-cyber-bg-darkest border-t border-cyber-bg-gray py-6 mt-auto text-center font-mono text-[10px] text-cyber-text-muted z-20 lg:pl-48 md:pr-48">
+      {/* Footer Info HUD (Aligned with container padding shift) */}
+      <footer className="w-full bg-cyber-bg-darkest border-t border-cyber-bg-gray py-6 mt-auto text-center font-mono text-[10px] text-cyber-text-muted z-20 lg:pl-36 lg:pr-36 xl:pl-20 xl:pr-20 2xl:pl-0 2xl:pr-0">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span>© 2026 Mohammad Shayaan Khan. All rights monitored.</span>
           <div className="flex gap-4">

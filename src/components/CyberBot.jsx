@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Terminal, Shield, Sparkles, ChevronRight } from 'lucide-react';
 
 const botQuotes = [
-  "Welcome! I am MD-SecBot, your cybersecurity companion.",
+  "Welcome! I am MD-Agent, your cybersecurity companion.",
   "All systems operational. Network grid looks clear.",
   "Tip: You can query log summaries in the shell interface.",
   "Intrusion status: 0 active threats detected. System is safe.",
@@ -20,6 +20,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isBlinking, setIsBlinking] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+  const [hasMouseMoved, setHasMouseMoved] = useState(false);
   const botRef = useRef(null);
 
   const isListening = isTerminalOpen;
@@ -35,44 +36,43 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
     return () => clearInterval(interval);
   }, [showBubble, isTerminalOpen, isThinking]);
 
-  // Periodic Cute Blinking
+  // Periodic Cute Blinking (3000ms interval, 120ms duration)
   useEffect(() => {
     const blinkCycle = () => {
       setIsBlinking(true);
       setTimeout(() => {
         setIsBlinking(false);
-      }, 160);
+      }, 120);
     };
 
     const interval = setInterval(() => {
-      if (!isBlinking && Math.random() > 0.3) {
-        blinkCycle();
-      }
-    }, 4500);
+      blinkCycle();
+    }, 3000);
 
     return () => clearInterval(interval);
-  }, [isBlinking]);
+  }, []);
 
-  // Periodic looking around when idle
+  // Periodic looking around when idle (only when mouse hasn't moved yet)
   useEffect(() => {
     const lookInterval = setInterval(() => {
-      if (isHovered || isThinking) return;
+      if (hasMouseMoved || isThinking) return;
       const rand = Math.random();
       if (rand < 0.25) {
-        setEyeLookOffset({ x: -2.0, y: 0 });
+        setEyeLookOffset({ x: -0.8, y: 0 });
         setTimeout(() => setEyeLookOffset({ x: 0, y: 0 }), 1400);
       } else if (rand < 0.5) {
-        setEyeLookOffset({ x: 2.0, y: 0 });
+        setEyeLookOffset({ x: 0.8, y: 0 });
         setTimeout(() => setEyeLookOffset({ x: 0, y: 0 }), 1400);
       }
     }, 7000);
 
     return () => clearInterval(lookInterval);
-  }, [isHovered, isThinking]);
+  }, [hasMouseMoved, isThinking]);
 
-  // Track cursor offsets relative to the bot center
+  // Track cursor offsets relative to the bot center (scaled to 64x64 coord space)
   useEffect(() => {
     const handleMouseMove = (e) => {
+      setHasMouseMoved(true);
       if (!botRef.current) return;
       const rect = botRef.current.getBoundingClientRect();
       const botCenterX = rect.left + rect.width / 2;
@@ -82,9 +82,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       const dy = e.clientY - botCenterY;
       const dist = Math.hypot(dx, dy);
 
-      const maxDisplacement = 3.5;
+      const maxDisplacement = 2.5; // Larger displacement for visible tracking
       if (dist > 0) {
-        const factor = Math.min(maxDisplacement, dist * 0.025);
+        const factor = Math.min(maxDisplacement, dist * 0.01);
         setMouseOffset({
           x: (dx / dist) * factor,
           y: (dy / dist) * factor
@@ -98,7 +98,7 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
 
   const handleMascotClick = (e) => {
     e.stopPropagation();
-    
+
     // Play sci-fi system chime sound
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -113,39 +113,29 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
       gain.connect(audioCtx.destination);
       osc.start();
       osc.stop(audioCtx.currentTime + 0.12);
-    } catch (err) {}
+    } catch (err) { }
 
-    setIsThinking(true);
-    setTimeout(() => {
-      setIsThinking(false);
-      const rand = Math.floor(Math.random() * botQuotes.length);
-      setQuoteIdx(rand);
-      if (!showBubble) {
+    // Toggle bubble open/closed state on click
+    if (showBubble) {
+      setShowBubble(false);
+    } else {
+      setIsThinking(true);
+      setTimeout(() => {
+        setIsThinking(false);
+        const rand = Math.floor(Math.random() * botQuotes.length);
+        setQuoteIdx(rand);
         setShowBubble(true);
-      }
-    }, 1500);
-  };
-
-  const activeEyeOffset = isHovered 
-    ? mouseOffset 
-    : eyeLookOffset;
-
-  // Unified Floating container variants
-  const containerVariants = {
-    idle: {
-      y: [0, -8, 0],
-      transition: { repeat: Infinity, duration: 4.8, ease: "easeInOut" }
-    },
-    hover: {
-      y: [0, -6, 0],
-      scale: 1.05,
-      transition: { repeat: Infinity, duration: 2.2, ease: "easeInOut" }
+      }, 1000);
     }
   };
 
+  const activeEyeOffset = hasMouseMoved
+    ? mouseOffset
+    : eyeLookOffset;
+
   return (
     <div className="fixed bottom-4 right-4 z-40 font-mono flex items-end gap-3.5 pointer-events-none select-none max-w-[calc(100vw-2rem)] lg:bottom-8 lg:right-8 lg:flex-row flex-col-reverse justify-end items-center lg:items-end">
-      
+
       {/* 1. Holographic Speech/Task Bubble */}
       <AnimatePresence>
         {showBubble && (
@@ -155,19 +145,19 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
             exit={{ opacity: 0, scale: 0.85, x: 20, y: 15 }}
             className="glassmorphism p-3.5 rounded-xl border border-google-red/45 text-left w-60 sm:w-64 shadow-2xl pointer-events-auto bg-cyber-bg-darker/95 relative mb-2"
           >
-            <div 
+            <div
               className="absolute top-1/2 -right-1.5 -translate-y-1/2 w-3 h-3 border-r border-t border-google-red/45 transform rotate-45"
               style={{ backgroundColor: 'var(--cyber-bg-darker)' }}
             />
-            
+
             <div className="flex items-center justify-between border-b border-cyber-bg-gray pb-1.5 mb-2 text-[9px] text-google-red font-bold">
               <div className="flex items-center gap-1.5">
                 <Shield size={11} className="animate-pulse text-google-red" />
-                <span>SEC-BOT COGNITIVE GRID</span>
+                <span>AGENT COGNITIVE GRID</span>
               </div>
               <span className="w-1.5 h-1.5 rounded-full bg-google-red animate-ping" />
             </div>
-            
+
             <p className="text-[10px] text-cyber-text-light font-sans leading-relaxed font-light mb-3 min-h-[30px]">
               {isThinking ? "Processing network vector node..." : botQuotes[quoteIdx]}
             </p>
@@ -207,143 +197,146 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal }) => {
         )}
       </AnimatePresence>
 
-      {/* 2. Unified Mascot Body Container (Floating head only) */}
-      <motion.div
-        ref={botRef}
-        animate={isHovered ? "hover" : "idle"}
-        variants={containerVariants}
-        className="w-[90px] h-[90px] md:w-[130px] md:h-[130px] cursor-pointer pointer-events-auto filter drop-shadow-[0_0_15px_rgba(142,229,63,0.35)] active:scale-95 transition-all"
-        title="SecBot AI Assistant - Click to query"
-        onClick={handleMascotClick}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        <svg viewBox="0 0 200 200" className="w-full h-full overflow-visible">
-          <defs>
-            {/* Simple White Eye Glow */}
-            <filter id="simpleEyeGlow" x="-30%" y="-30%" width="160%" height="160%">
-              <feGaussianBlur stdDeviation="1.5" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
+      {/* 2. Unified Mascot Body Container (Nested float/breathe wrappers, styled with CSS animations) */}
+      <div className="agent-float-wrapper pointer-events-auto">
+        <div className="agent-breathe-wrapper">
+          <div
+            ref={botRef}
+            id="agent"
+            className={`cursor-pointer filter drop-shadow-[0_0_15px_rgba(234,67,53,0.35)] active:scale-95 transition-all duration-300 ${isThinking ? 'talking' : ''}`}
+            title="Agent AI Assistant - Click to query"
+            onClick={handleMascotClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <svg viewBox="0 0 64 64" className="w-full h-full overflow-visible">
+              <defs>
+                {/* Simple White Eye Glow */}
+                <filter id="simpleEyeGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="0.5" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
 
-            {/* Ambient Shadow */}
-            <filter id="shadowGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-          </defs>
+                {/* Ambient Shadow */}
+                <filter id="shadowGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
 
-          {/* Soft Shadow Underneath */}
-          <ellipse
-            cx="100"
-            cy="175"
-            rx="45"
-            ry="7"
-            fill="rgba(0, 0, 0, 0.2)"
-            filter="url(#shadowGlow)"
-          />
-
-          {/* Mascot Head Logo Group */}
-          <g>
-            {/* The Green Silhouette Head with thick black outline */}
-            <path
-              d="M 100 160 
-                 C 65 160, 40 145, 30 115 
-                 C 20 85, 45 45, 95 30 
-                 C 115 25, 125 35, 140 30 
-                 C 150 25, 165 18, 172 26 
-                 C 176 30, 178 38, 172 42 
-                 C 168 45, 162 40, 164 34 
-                 C 155 35, 140 45, 132 58 
-                 C 145 80, 160 115, 155 135 
-                 C 150 150, 135 160, 100 160 Z"
-              fill="#8EE53F"
-              stroke="#111111"
-              strokeWidth="5"
-              strokeLinejoin="round"
-            />
-
-            {/* Matte Black Face Opening */}
-            <path
-              d="M 68 125 
-                 C 52 110, 52 82, 68 68 
-                 C 80 54, 120 54, 132 68 
-                 C 148 82, 148 110, 132 125 
-                 C 118 135, 82 135, 68 125 Z"
-              fill="#111111"
-              stroke="#111111"
-              strokeWidth="2"
-            />
-
-            {/* Eyes (Simple white vertical rounded ovals) */}
-            <g>
-              <motion.g
-                animate={isListening ? { opacity: [1, 0.85, 1, 0.9, 1] } : { opacity: 1 }}
-                transition={{ duration: 2.2, repeat: Infinity }}
-              >
-                {isBlinking ? (
-                  <>
-                    <path d="M 81 96 Q 86 98 91 96" stroke="#FFFFFF" strokeWidth="3.0" strokeLinecap="round" fill="none" />
-                    <path d="M 109 96 Q 114 98 119 96" stroke="#FFFFFF" strokeWidth="3.0" strokeLinecap="round" fill="none" />
-                  </>
-                ) : (
-                  <>
-                    <ellipse 
-                      cx={86 + activeEyeOffset.x} 
-                      cy={96 + activeEyeOffset.y} 
-                      rx="6.5" 
-                      ry="11.5" 
-                      fill="#FFFFFF" 
-                      filter="url(#simpleEyeGlow)" 
-                    />
-                    <ellipse 
-                      cx={114 + activeEyeOffset.x} 
-                      cy={96 + activeEyeOffset.y} 
-                      rx="6.5" 
-                      ry="11.5" 
-                      fill="#FFFFFF" 
-                      filter="url(#simpleEyeGlow)" 
-                    />
-                  </>
-                )}
-              </motion.g>
-            </g>
-          </g>
-
-          {/* THINKING STATE: Rotating dashed eye rings */}
-          {isThinking && (
-            <>
-              {/* Dotted target rings around eyes */}
-              <motion.circle
-                cx="86" cy="96" r="15"
-                stroke="#8EE53F" strokeWidth="1.2" strokeDasharray="3 3" fill="none"
-                animate={{ rotate: 360 }}
-                transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                style={{ originX: '86px', originY: '96px' }}
-                opacity="0.85"
+              {/* Soft Shadow Underneath (moved lower to cy="60" for more float gap) */}
+              <ellipse
+                cx="32"
+                cy="60"
+                rx="14"
+                ry="1.5"
+                fill="rgba(0, 0, 0, 0.4)"
+                filter="url(#shadowGlow)"
               />
-              <motion.circle
-                cx="114" cy="96" r="15"
-                stroke="#8EE53F" strokeWidth="1.2" strokeDasharray="3 3" fill="none"
-                animate={{ rotate: -360 }}
-                transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                style={{ originX: '114px', originY: '96px' }}
-                opacity="0.85"
-              />
-            </>
-          )}
 
-          {/* LISTENING STATE: Floating packet particles */}
-          {isListening && (
-            <g className="pointer-events-none">
-              <motion.circle cx="36" cy="110" r="1.8" fill="#8EE53F" animate={{ y: [-15, -65], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.4, delay: 0 }} />
-              <motion.circle cx="164" cy="115" r="2.2" fill="#8EE53F" animate={{ y: [-10, -75], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.8, delay: 0.6 }} />
-              <motion.circle cx="48" cy="48" r="1.5" fill="#8EE53F" animate={{ y: [-5, -45], opacity: [0, 0.8, 0] }} transition={{ repeat: Infinity, duration: 2.0, delay: 1.2 }} />
-              <motion.circle cx="152" cy="58" r="2.0" fill="#8EE53F" animate={{ y: [-8, -58], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.6, delay: 1.8 }} />
-            </g>
-          )}
-        </svg>
-      </motion.div>
+              {/* Mascot Head Logo Group */}
+              <g>
+                {/* Scaled-down Outer Body Group (Outline + Fill) */}
+                <g transform="translate(32, 32) scale(0.90) translate(-32, -32)">
+                  {/* Outer Silhouette (Outline) */}
+                  <path
+                    d="M 60 10 L 58 12 L 54 8 L 50 9 L 47 15 L 44 14 L 37 10 L 31 10 L 27 12 L 17 22 L 12 29 L 7 39 L 6 42 L 6 44 L 8 48 L 10 50 L 12 51 L 22 53 L 37 53 L 42 52 L 48 50 L 50 49 L 52 47 L 53 45 L 53 41 L 52 38 L 50 35 L 50 33 L 48 31 L 46 28 L 46 26 L 47 24 L 52 19 L 53 16 L 58 16 L 60 14 Z"
+                    fill="#070909"
+                  />
+
+                  {/* Google Red Body */}
+                  <path
+                    d="M 58 13 L 56 13 L 52 10 L 51 13 L 47 17 L 45 17 L 41 15 L 39 13 L 37 12 L 31 12 L 26 15 L 18 24 L 13 31 L 8 41 L 8 44 L 9 46 L 11 48 L 15 50 L 18 51 L 24 52 L 35 52 L 41 51 L 44 50 L 48 48 L 50 46 L 51 44 L 51 41 L 50 38 L 49 36 L 47 34 L 44 27 L 42 25 L 40 20 L 39 16 L 43 20 L 45 21 L 48 21 L 50 19 L 51 16 L 51 14 L 53 12 L 55 14 Z"
+                    fill="#EA4335"
+                  />
+                </g>
+
+                {/* Matte Black Face Opening (Clean Oval shifted to left by 3px) */}
+                <ellipse
+                  cx="29.5"
+                  cy="38"
+                  rx="15.5"
+                  ry="12"
+                  fill="#070909"
+                />
+
+                {/* Eyes (Shifted left by 3px) */}
+                <g>
+                  {isBlinking ? (
+                    <>
+                      <ellipse
+                        cx={23.5 + activeEyeOffset.x}
+                        cy={38 + activeEyeOffset.y}
+                        rx="2.5"
+                        ry="0.5"
+                        fill="#FFFFFF"
+                      />
+                      <ellipse
+                        cx={36.0 + activeEyeOffset.x}
+                        cy={38 + activeEyeOffset.y}
+                        rx="2.5"
+                        ry="0.5"
+                        fill="#FFFFFF"
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <ellipse
+                        cx={23.5 + activeEyeOffset.x}
+                        cy={38 + activeEyeOffset.y}
+                        rx="2.5"
+                        ry="4"
+                        fill="#FFFFFF"
+                        filter="url(#simpleEyeGlow)"
+                      />
+                      <ellipse
+                        cx={36.0 + activeEyeOffset.x}
+                        cy={38 + activeEyeOffset.y}
+                        rx="2.5"
+                        ry="4"
+                        fill="#FFFFFF"
+                        filter="url(#simpleEyeGlow)"
+                      />
+                    </>
+                  )}
+                </g>
+              </g>
+
+              {/* THINKING STATE: Rotating dashed eye rings (Google Red - Shifted left by 3px) */}
+              {isThinking && (
+                <>
+                  <motion.circle
+                    cx="23.5" cy="38" r="5"
+                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
+                    animate={{ rotate: 360 }}
+                    transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
+                    style={{ originX: '23.5px', originY: '38px' }}
+                    opacity="0.85"
+                  />
+                  <motion.circle
+                    cx="36.0" cy="38" r="5"
+                    stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1 1" fill="none"
+                    animate={{ rotate: -360 }}
+                    transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
+                    style={{ originX: '36.0px', originY: '38px' }}
+                    opacity="0.85"
+                  />
+                </>
+              )}
+
+              {/* LISTENING STATE: Floating packet particles (Google Red) */}
+              {isListening && (
+                <g className="pointer-events-none">
+                  <motion.circle cx="10" cy="38" r="0.8" fill="#EA4335" animate={{ y: [-5, -20], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.4, delay: 0 }} />
+                  <motion.circle cx="54" cy="40" r="1.0" fill="#EA4335" animate={{ y: [-3, -25], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.8, delay: 0.6 }} />
+                  <motion.circle cx="16" cy="16" r="0.6" fill="#EA4335" animate={{ y: [-2, -15], opacity: [0, 0.8, 0] }} transition={{ repeat: Infinity, duration: 2.0, delay: 1.2 }} />
+                  <motion.circle cx="48" cy="20" r="0.9" fill="#EA4335" animate={{ y: [-3, -18], opacity: [0, 0.9, 0] }} transition={{ repeat: Infinity, duration: 2.6, delay: 1.8 }} />
+                </g>
+              )}
+            </svg>
+          </div>
+        </div>
+      </div>
 
     </div>
   );

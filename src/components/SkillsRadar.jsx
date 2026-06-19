@@ -21,8 +21,8 @@ const SkillsRadar = () => {
 
   // Radar SVG constants
   const size = 300;
-  const center = size / 2;
-  const radius = size * 0.4;
+  const center = (size + 80) / 2;
+  const radius = size * 0.35;
   const angleStep = (Math.PI * 2) / skills.length;
 
   const levels = [0.2, 0.4, 0.6, 0.8, 1.0];
@@ -46,7 +46,7 @@ const SkillsRadar = () => {
       
       {/* Radar SVG Left */}
       <div className="relative flex justify-center items-center w-full md:w-1/2">
-        <svg width={size + 60} height={size + 60} className="overflow-visible select-none">
+        <svg width={size + 80} height={size + 80} className="overflow-visible select-none">
           {levels.map((level, lIdx) => {
             const points = skills
               .map((_, sIdx) => {
@@ -114,7 +114,7 @@ const SkillsRadar = () => {
 
           {/* Skill Labels on Outer Rim */}
           {skills.map((skill, index) => {
-            const coord = getCoordinates(index, 1.15);
+            const coord = getCoordinates(index, 1.12);
             const isHovered = hoveredSkill?.name === skill.name;
             const angle = index * angleStep - Math.PI / 2;
             
@@ -153,7 +153,7 @@ const SkillsRadar = () => {
           <div className="w-2.5 h-2.5 rounded-full bg-google-red" />
           <div className="w-2.5 h-2.5 rounded-full bg-google-yellow" />
           <div className="w-2.5 h-2.5 rounded-full bg-google-green" />
-          <span className="text-[10px] text-cyber-text-muted uppercase tracking-widest font-bold ml-1.5">
+          <span className="text-[10px] text-cyber-text-muted-bright uppercase tracking-widest font-bold ml-1.5">
             Skill Analytics Terminal
           </span>
         </div>
@@ -162,7 +162,7 @@ const SkillsRadar = () => {
         {hoveredSkill ? (
           <div className="flex-1 flex flex-col gap-3">
             <div>
-              <span className="text-cyber-text-muted text-[10px]">TOOL / CONCEPT:</span>
+              <span className="text-cyber-text-muted-bright text-[10px]">TOOL / CONCEPT:</span>
               <h4 className="text-cyber-text-white font-bold text-lg tracking-wide uppercase font-sans mt-0.5">
                 {hoveredSkill.name}
               </h4>
@@ -170,13 +170,13 @@ const SkillsRadar = () => {
 
             <div className="grid grid-cols-2 gap-4 border-y border-cyber-bg-gray/40 py-3">
               <div>
-                <span className="text-cyber-text-muted text-[9px] block">SECURITY CATEGORY</span>
+                <span className="text-cyber-text-muted-bright text-[9px] block">SECURITY CATEGORY</span>
                 <span className="text-google-blue text-xs font-bold font-sans">
                   {hoveredSkill.category}
                 </span>
               </div>
               <div>
-                <span className="text-cyber-text-muted text-[9px] block">PROFICIENCY LEVEL</span>
+                <span className="text-cyber-text-muted-bright text-[9px] block">PROFICIENCY LEVEL</span>
                 <span className="text-google-green text-xs font-bold">
                   {hoveredSkill.level}% (SECURE)
                 </span>
@@ -184,7 +184,7 @@ const SkillsRadar = () => {
             </div>
 
             <div className="flex-1 flex flex-col gap-1.5 mt-2">
-              <span className="text-cyber-text-muted text-[9px]">CAPABILITIES SUMMARY:</span>
+              <span className="text-cyber-text-muted-bright text-[9px]">CAPABILITIES SUMMARY:</span>
               <p className="text-cyber-text-light text-xs leading-relaxed font-sans font-light">
                 {hoveredSkill.description}
               </p>

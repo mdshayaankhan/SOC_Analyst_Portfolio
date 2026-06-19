@@ -140,7 +140,7 @@ const CyberMapHUD = () => {
       </div>
 
       {/* Mobile HUD Trigger (Hidden on screens >= 1024px) */}
-      <div className="fixed bottom-4 right-4 z-40 lg:hidden">
+      <div className="fixed bottom-4 left-4 z-40 lg:hidden">
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-12 h-12 rounded-full glassmorphism-blue flex items-center justify-center text-google-blue cursor-pointer shadow-xl focus:outline-none"
@@ -153,7 +153,7 @@ const CyberMapHUD = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-14 right-0 glassmorphism-blue p-4 rounded-xl flex flex-col gap-2 w-48 shadow-2xl"
+            className="absolute bottom-14 left-0 glassmorphism-blue p-4 rounded-xl flex flex-col gap-2 w-48 shadow-2xl"
           >
             <div className="font-mono text-[10px] text-google-blue border-b border-cyber-bg-gray pb-1.5 font-bold uppercase tracking-wider">
               ROADMAP JOURNEY

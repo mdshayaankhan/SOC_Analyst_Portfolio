@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%">
+  <!-- Outer Silhouette (Outline) -->
+  <path d="M 60 10 L 58 12 L 54 8 L 50 9 L 47 15 L 44 14 L 37 10 L 31 10 L 27 12 L 17 22 L 12 29 L 7 39 L 6 42 L 6 44 L 8 48 L 10 50 L 12 51 L 22 53 L 37 53 L 42 52 L 48 50 L 50 49 L 52 47 L 53 45 L 53 41 L 52 38 L 50 35 L 50 33 L 48 31 L 46 28 L 46 26 L 47 24 L 52 19 L 53 16 L 58 16 L 60 14 Z" fill="#070909" />
+  <!-- Green Body -->
+  <path d="M 58 13 L 56 13 L 52 10 L 51 13 L 47 17 L 45 17 L 41 15 L 39 13 L 37 12 L 31 12 L 26 15 L 18 24 L 13 31 L 8 41 L 8 44 L 9 46 L 11 48 L 15 50 L 18 51 L 24 52 L 35 52 L 41 51 L 44 50 L 48 48 L 50 46 L 51 44 L 51 41 L 50 38 L 49 36 L 47 34 L 44 27 L 42 25 L 40 20 L 39 16 L 43 20 L 45 21 L 48 21 L 50 19 L 51 16 L 51 14 L 53 12 L 55 14 Z" fill="#A2EA2A" />
+  <!-- Black Face Mask -->
+  <path d="M 15 39 L 15 44 L 19 48 L 25 50 L 36 50 L 39 49 L 42 47 L 45 46 L 46 44 L 46 42 L 45 38 L 44 36 L 42 34 L 40 30 L 37 28 L 33 26 L 29 26 L 26 27 L 20 31 L 17 35 Z" fill="#070909" />
+  <!-- White Eyes -->
+  <path d="M 37 35 L 38 42 L 41 41 L 40 34 Z" class="agent-eye" fill="#FFFFFF" />
+  <path d="M 25 34 L 24 36 L 24 40 L 27 42 L 29 40 L 29 36 L 28 34 Z" class="agent-eye" fill="#FFFFFF" />
+</svg>

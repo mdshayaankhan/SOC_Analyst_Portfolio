@@ -60,7 +60,7 @@ const LockedMissions = () => {
       
       {/* Grid of Missions Left */}
       <div className="w-full md:w-1/2 flex flex-col gap-3">
-        <span className="text-[10px] text-cyber-text-muted uppercase tracking-wider block mb-1">
+        <span className="text-[10px] text-cyber-text-muted-bright uppercase tracking-wider block mb-1">
           Select Classified Mission File
         </span>
         
@@ -130,14 +130,14 @@ const LockedMissions = () => {
         {/* Content */}
         <div className="flex-1 flex flex-col gap-4">
           <div>
-            <span className="text-cyber-text-muted text-[8px] block uppercase">Strategic Focus:</span>
+            <span className="text-cyber-text-muted-bright text-[8px] block uppercase">Strategic Focus:</span>
             <p className="text-cyber-text-light text-[11px] leading-relaxed font-sans font-light mt-1">
               {selectedMission.focus}
             </p>
           </div>
 
           <div className="flex-1 flex flex-col gap-2">
-            <span className="text-cyber-text-muted text-[8px] block uppercase">Operational Objectives:</span>
+            <span className="text-cyber-text-muted-bright text-[8px] block uppercase">Operational Objectives:</span>
             <div className="flex flex-col gap-2 mt-1">
               {selectedMission.objectives.map((obj, idx) => (
                 <div key={idx} className="flex items-start gap-2 text-[10px] font-sans text-cyber-text-light font-light leading-relaxed">
@@ -152,7 +152,7 @@ const LockedMissions = () => {
         {/* Mission footer */}
         <div className="flex items-center gap-1.5 mt-4 pt-3 border-t border-cyber-bg-gray/40 text-[9px]">
           <span className="w-1.5 h-1.5 rounded-full bg-google-green animate-ping" />
-          <span className="text-cyber-text-muted">PREPARATION READINESS STAGE ENFORCED</span>
+          <span className="text-cyber-text-muted-bright">PREPARATION READINESS STAGE ENFORCED</span>
         </div>
       </div>
 

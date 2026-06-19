@@ -77,7 +77,7 @@ const ProjectsVault = () => {
             >
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded border bg-cyber-bg-gray/30 text-cyber-text-muted" style={{ borderColor: isSelected ? proj.color : 'var(--glass-border)' }}>
+                  <span className="text-[9px] uppercase font-bold px-2 py-0.5 rounded border bg-cyber-bg-gray/30 text-cyber-text-muted-bright" style={{ borderColor: isSelected ? proj.color : 'var(--glass-border)' }}>
                     {proj.category}
                   </span>
                   <Folder size={14} style={{ color: proj.color }} />
@@ -87,7 +87,7 @@ const ProjectsVault = () => {
                   {proj.title}
                 </h4>
                 
-                <p className="text-[11px] text-cyber-text-muted leading-relaxed font-sans mt-2">
+                <p className="text-[11px] text-cyber-text-light leading-relaxed font-sans mt-2">
                   {proj.shortDesc}
                 </p>
               </div>
