@@ -286,12 +286,14 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                   />
                 </g>
 
-                {/* Matte Black Face Opening (Clean Oval shifted to left by 3px) */}
-                <ellipse
-                  cx="29.5"
-                  cy="38"
-                  rx="15.5"
-                  ry="12"
+                {/* Matte Black Face Opening (Organic Rounded Triangle - Apex Up) */}
+                <path
+                  d="M 29.5 26
+                     C 34 25, 47 33, 45 42
+                     C 44 46, 36 48, 29.5 48
+                     C 23 48, 15 46, 14 42
+                     C 12 33, 25 25, 29.5 26
+                     Z"
                   fill="#070909"
                 />
 
@@ -347,9 +349,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                     stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1.5 1.5" fill="none"
                     animate={{ rotate: 360 }}
                     transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                    style={{ 
-                      originX: `${23.5 + activeEyeOffset.x}px`, 
-                      originY: `${38 + activeEyeOffset.y}px` 
+                    style={{
+                      originX: `${23.5 + activeEyeOffset.x}px`,
+                      originY: `${38 + activeEyeOffset.y}px`
                     }}
                     opacity="0.85"
                   />
@@ -360,9 +362,9 @@ const CyberBot = ({ isTerminalOpen, onToggleTerminal, onSimulateAttack }) => {
                     stroke="#EA4335" strokeWidth="0.5" strokeDasharray="1.5 1.5" fill="none"
                     animate={{ rotate: -360 }}
                     transition={{ repeat: Infinity, duration: 2.2, ease: "linear" }}
-                    style={{ 
-                      originX: `${36.0 + activeEyeOffset.x}px`, 
-                      originY: `${38 + activeEyeOffset.y}px` 
+                    style={{
+                      originX: `${36.0 + activeEyeOffset.x}px`,
+                      originY: `${38 + activeEyeOffset.y}px`
                     }}
                     opacity="0.85"
                   />
